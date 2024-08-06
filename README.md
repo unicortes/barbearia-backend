@@ -1,7 +1,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/69114b9aa610439881a3b4a0237b14b9)](https://www.codacy.com/gh/esMEIproject/gerenciamento-servicos/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=esMEIproject/gerenciamento-servicos&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.com/esMEIproject/gerenciamento-servicos.svg?branch=main)](https://travis-ci.com/esMEIproject/gerenciamento-servicos)
 # Sistema de Gerenciamento de Barbearia
 ## :octocat: Integrantes
-[Carla Daniela](https://github.com/carla-neves) | [Gustavo Brandão](https://github.com/ogustavobrandao) | [Gustavo Henrique](https://github.com/GustavoHenrique000) | [José Alves](https://github.com/IBORD) | [Luana Vitória](https://github.com/LuBrito371) | [Matheus Marcos](https://github.com/Matheusxr77)
+[Carla Daniela](https://github.com/carla-neves) | [Gustavo Brandão](https://github.com/ogustavobrandao) | [Gustavo Henrique](https://github.com/GustavoHenrique000) | [José Alves](https://github.com/IBORD) | [Luana Vitória](https://github.com/LuBrito371) | [Lucas Santos](https://github.com/LucasWillian2) | [Matheus Marcos](https://github.com/Matheusxr77)
 | [Mayara Karoline](https://github.com/mayeufraferreira) | [Yasmin Muniz](https://github.com/Yasmiinmuniz)
 ## :page_with_curl: Sobre o Projeto
 Projeto para implementação de um SaaS em Java e Spring com foco no planejamento e organização para a disciplina de __Engenharia de Software__ ministrado pelo Professor Dr. [Rodrigo Andrade](https://github.com/rcaa), da UFAPE, referente ao período de 2024.1 com intuito de avaliação para a 2ª Verificação de Aprendizagem.
