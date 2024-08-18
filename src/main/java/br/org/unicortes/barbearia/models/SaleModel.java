@@ -5,35 +5,37 @@ import lombok.*;
 
 import java.util.Date;
 
-
+@Getter
+@Setter
 @Entity
 @Table(name = "tbSales")
 public class SaleModel {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.SEQUENCE)
-    @Column(name = "saleId")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sale_seq")
+    @SequenceGenerator(name = "sale_seq", sequenceName = "sale_sequence", allocationSize = 1)
+    @Column(name = "sale_id")
     private long saleId;
 
-    @Column(name = "saleName")
+    @Column(name = "sale_name")
     private String saleName;
 
-    @Column(name = "saleDescription")
+    @Column(name = "sale_description")
     private String saleDescription;
 
-    @Column(name = "salePromoCode")
+    @Column(name = "sale_promo_code")
     private String salePromoCode;
 
-    @Column(name = "saleDiscount")
+    @Column(name = "sale_discount")
     private double saleDiscount;
 
-    @Column(name = "saleExpirationDate")
+    @Column(name = "sale_expiration_date")
     private Date saleExpirationDate;
 
-    @Column(name = "saleCategory")
+    @Column(name = "sale_category")
     private String saleCategory;
 
-    @Column(name = "saleAvailability")
+    @Column(name = "sale_availability")
     private boolean saleAvailability;
 
 }
