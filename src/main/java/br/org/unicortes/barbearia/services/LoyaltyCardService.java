@@ -58,7 +58,7 @@ public class LoyaltyCardService {
         try{
             LocalDate currentDate = LocalDate.now();
             LocalDate clientBirthday = client.getBirthday();
-            LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClient(client.getId());
+            LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClientId(client.getId());
             if (clientBirthday.equals(currentDate)) {
                 this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
             }

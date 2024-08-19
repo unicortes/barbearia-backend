@@ -31,7 +31,8 @@ public class SaleServiceTest {
     public void setUp(){
         MockitoAnnotations.openMocks(this);
 
-        Date date = new Date("2024-09-24");
+        sale = new Sale();
+        Date date = new Date();
 
         sale.setSaleName("Aniversário");
         sale.setSaleDescription("Promoção de aniversário do cliente");
@@ -66,25 +67,27 @@ public class SaleServiceTest {
         Sale result = saleService.getSaleById(saleId);
 
         assertNull(result);
+
         verify(saleRepository, times(1)).findBySaleId(saleId);
     }
 
+
     @Test
     public void testCreateSale() {
-        sale.setSaleId(1);
+        sale.setSaleId(1L);
 
         when(saleRepository.save(any(Sale.class))).thenReturn(sale);
 
         Sale result = saleService.createSale(sale);
 
         assertNotNull(result);
-        assertEquals(1, result.getSaleId());
+        assertEquals(1L, result.getSaleId());
         verify(saleRepository, times(1)).save(sale);
     }
 
     @Test
     public void testUpdateSale() {
-        sale.setSaleId(1);
+        sale.setSaleId(1L);
 
         when(saleRepository.existsById(sale.getSaleId())).thenReturn(true);
         when(saleRepository.save(any(Sale.class))).thenReturn(sale);
@@ -92,7 +95,7 @@ public class SaleServiceTest {
         Sale result = saleService.updateSale(sale);
 
         assertNotNull(result);
-        assertEquals(1, result.getSaleId());
+        assertEquals(1L, result.getSaleId());
         verify(saleRepository, times(1)).existsById(sale.getSaleId());
         verify(saleRepository, times(1)).save(sale);
     }

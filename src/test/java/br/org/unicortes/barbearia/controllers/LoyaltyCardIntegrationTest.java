@@ -140,7 +140,6 @@ public class LoyaltyCardIntegrationTest {
         saleForLoyaltyCard.setSaleExpirationDate(date);
         saleForLoyaltyCard.setSaleCategory("Promoção");
         saleForLoyaltyCard.setSaleAvailability(true);
-        saleForLoyaltyCard.setId(1L);
 
         mockMvc.perform(post("/api/loyaltyCards/sale/newSaleForLoyalty/{id}", loyaltyCard.getId())
                         .contentType(MediaType.APPLICATION_JSON)

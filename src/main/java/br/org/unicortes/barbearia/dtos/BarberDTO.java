@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class BarberDTO {
     private Long barberId;
-    private String nome;
+    private String name;
     private String barberEmail;
     private String barberTelefone;
     private String barberCpf;
