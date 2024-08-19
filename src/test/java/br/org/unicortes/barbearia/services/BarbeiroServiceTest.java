@@ -28,8 +28,8 @@ public class BarbeiroServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        barbeiro = new Barbeiro("Gustavo", "gustavo@email.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
-        barbeiro.setBarbeiroById(1L);
+        barbeiro = new Barbeiro(null, "Gustavo", "gustavo@email.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
+        barbeiro.setBarbeiroId(1L);
     }
 
     // teste 1
@@ -39,7 +39,7 @@ public class BarbeiroServiceTest {
         Barbeiro createdBarbeiro = barbeiroService.createBarbeiro(barbeiro);
 
         assertNotNull(createdBarbeiro);
-        assertEquals(barbeiro.getBarbeiroByNome(), createdBarbeiro.getBarbeiroByNome());
+        assertEquals(barbeiro.getBarbeiroNome(), createdBarbeiro.getBarbeiroNome());
         verify(barbeiroRepository, times(1)).save(barbeiro);
     }
 
@@ -52,7 +52,7 @@ public class BarbeiroServiceTest {
         Barbeiro updatedBarbeiro = barbeiroService.updateBarbeiro(id, barbeiro);
 
         assertNotNull(updatedBarbeiro);
-        assertEquals(barbeiro.getBarbeiroById(), updatedBarbeiro.getBarbeiroById());
+        assertEquals(barbeiro.getBarbeiroId(), updatedBarbeiro.getBarbeiroId());
         verify(barbeiroRepository, times(1)).findById(id);
         verify(barbeiroRepository, times(1)).save(barbeiro);
     }

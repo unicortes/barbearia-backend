@@ -43,29 +43,29 @@ public class BarbeiroController {
 
     private BarbeiroDTO convertToDTO(Barbeiro barbeiro) {
         BarbeiroDTO barbeiroDTO = new BarbeiroDTO();
-        barbeiroDTO.setBarbeiroId(barbeiro.getBarbeiroById());
-        barbeiroDTO.setBarbeiroNome(barbeiro.getBarbeiroByNome());
-        barbeiroDTO.setBarbeiroEmail(barbeiro.getBarbeiroByEmail());
-        barbeiroDTO.setBarbeiroTelefone(barbeiro.getBarbeiroByTelefone());
-        barbeiroDTO.setBarbeiroCpf(barbeiro.getBarbeiroByCpf());
-        barbeiroDTO.setBarbeiroSalario(barbeiro.getBarbeiroBySalario());
-        barbeiroDTO.setBarbeiroEndereco(barbeiro.getBarbeiroByEndereco());
-        barbeiroDTO.setBarbeiroDataDeAdimissao(barbeiro.getBarbeiroByDataAdmissao());
-        barbeiroDTO.setBarbeiroHorariosAtendimento(barbeiro.getBarbeiroByHorariosAtendimento());
+        barbeiroDTO.setBarbeiroId(barbeiro.getBarbeiroId());
+        barbeiroDTO.setBarbeiroNome(barbeiro.getBarbeiroNome());
+        barbeiroDTO.setBarbeiroEmail(barbeiro.getBarbeiroEmail());
+        barbeiroDTO.setBarbeiroTelefone(barbeiro.getBarbeiroTelefone());
+        barbeiroDTO.setBarbeiroCpf(barbeiro.getBarbeiroCpf());
+        barbeiroDTO.setBarbeiroSalario(barbeiro.getBarbeiroSalario());
+        barbeiroDTO.setBarbeiroEndereco(barbeiro.getBarbeiroEndereco());
+        barbeiroDTO.setBarbeiroDataDeAdimissao(barbeiro.getBarbeiroDataDeAdimissao());
+        barbeiroDTO.setBarbeiroHorariosAtendimento(barbeiro.getBarbeiroHorariosAtendimento());
         return barbeiroDTO;
     }
 
     private Barbeiro convertToEntity(BarbeiroDTO barbeiroDTO) {
         Barbeiro barbeiro = new Barbeiro();
-        barbeiro.setBarbeiroById(barbeiroDTO.getBarbeiroId());
-        barbeiro.setBarbeiroByNome(barbeiroDTO.getBarbeiroNome());
-        barbeiro.setBarbeiroByEmail(barbeiroDTO.getBarbeiroEmail());
-        barbeiro.setBarbeiroByTelefone(barbeiroDTO.getBarbeiroTelefone());
-        barbeiro.setBarbeiroByCpf(barbeiroDTO.getBarbeiroCpf());
-        barbeiro.setBarbeiroBySalario(barbeiroDTO.getBarbeiroSalario());
-        barbeiro.setBarbeiroByEndereco(barbeiroDTO.getBarbeiroEndereco());
-        barbeiro.setBarbeiroByDataAdmissao(barbeiroDTO.getBarbeiroDataDeAdimissao());
-        barbeiro.setBarbeiroByHorariosAtendimento(barbeiroDTO.getBarbeiroHorariosAtendimento());
+        barbeiro.setBarbeiroId(barbeiroDTO.getBarbeiroId());
+        barbeiro.setBarbeiroNome(barbeiroDTO.getBarbeiroNome());
+        barbeiro.setBarbeiroEmail(barbeiroDTO.getBarbeiroEmail());
+        barbeiro.setBarbeiroTelefone(barbeiroDTO.getBarbeiroTelefone());
+        barbeiro.setBarbeiroCpf(barbeiroDTO.getBarbeiroCpf());
+        barbeiro.setBarbeiroSalario(barbeiroDTO.getBarbeiroSalario());
+        barbeiro.setBarbeiroEndereco(barbeiroDTO.getBarbeiroEndereco());
+        barbeiro.setBarbeiroDataDeAdimissao(barbeiroDTO.getBarbeiroDataDeAdimissao());
+        barbeiro.setBarbeiroHorariosAtendimento(barbeiroDTO.getBarbeiroHorariosAtendimento());
         return barbeiro;
     }
 }

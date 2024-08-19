@@ -30,45 +30,45 @@ public class BarbeiroIntegrationTest {
     @BeforeEach
     void setUp() {
         barbeiroRepository.deleteAll(); // Limpa o banco de dados antes de cada teste
-        barbeiro = new Barbeiro("João Silva", "joao@example.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
+        barbeiro = new Barbeiro(null, "João Silva", "joao@example.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
     }
 
     @Test
     void testCreateBarbeiro() {
         Barbeiro savedBarbeiro = barbeiroService.createBarbeiro(barbeiro);
         assertNotNull(savedBarbeiro);
-        assertNotNull(savedBarbeiro.getBarbeiroById());
-        assertEquals(barbeiro.getBarbeiroByNome(), savedBarbeiro.getBarbeiroByNome());
+        assertNotNull(savedBarbeiro.getBarbeiroId());
+        assertEquals(barbeiro.getBarbeiroNome(), savedBarbeiro.getBarbeiroNome());
 
-        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(savedBarbeiro.getBarbeiroById());
+        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(savedBarbeiro.getBarbeiroId());
         assertTrue(foundBarbeiro.isPresent());
     }
 
     @Test
     void testUpdateBarbeiro() {
         Barbeiro savedBarbeiro = barbeiroService.createBarbeiro(barbeiro);
-        savedBarbeiro.setBarbeiroByNome("Carlos Souza");
-        Barbeiro updatedBarbeiro = barbeiroService.updateBarbeiro(savedBarbeiro.getBarbeiroById(), savedBarbeiro);
+        savedBarbeiro.setBarbeiroNome("Carlos Souza");
+        Barbeiro updatedBarbeiro = barbeiroService.updateBarbeiro(savedBarbeiro.getBarbeiroId(), savedBarbeiro);
         assertNotNull(updatedBarbeiro);
-        assertEquals("Carlos Souza", updatedBarbeiro.getBarbeiroByNome());
+        assertEquals("Carlos Souza", updatedBarbeiro.getBarbeiroNome());
 
-        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(updatedBarbeiro.getBarbeiroById());
+        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(updatedBarbeiro.getBarbeiroId());
         assertTrue(foundBarbeiro.isPresent());
-        assertEquals("Carlos Souza", foundBarbeiro.get().getBarbeiroByNome());
+        assertEquals("Carlos Souza", foundBarbeiro.get().getBarbeiroNome());
     }
 
     @Test
     void testDeleteBarbeiro() {
         Barbeiro savedBarbeiro = barbeiroService.createBarbeiro(barbeiro);
-        barbeiroService.deleteBarbeiro(savedBarbeiro.getBarbeiroById());
-        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(savedBarbeiro.getBarbeiroById());
+        barbeiroService.deleteBarbeiro(savedBarbeiro.getBarbeiroId());
+        Optional<Barbeiro> foundBarbeiro = barbeiroRepository.findById(savedBarbeiro.getBarbeiroId());
         assertFalse(foundBarbeiro.isPresent());
     }
 
     @Test
     void testListarTodosBarbeiros() {
         Barbeiro barbeiro1 = barbeiroService.createBarbeiro(barbeiro);
-        Barbeiro barbeiro2 = barbeiroService.createBarbeiro(new Barbeiro("Carlos Souza", "carlos@example.com", "0987654321", "10987654321", 1600.0, "Rua 2, Nº 20", LocalDate.now(), "10:00 - 19:00"));
+        Barbeiro barbeiro2 = barbeiroService.createBarbeiro(new Barbeiro(null, "Carlos Souza", "carlos@example.com", "0987654321", "10987654321", 1600.0, "Rua 2, Nº 20", LocalDate.now(), "10:00 - 19:00"));
         List<Barbeiro> barbeiros = barbeiroService.listarTodosBarbeiros();
 
         assertNotNull(barbeiros);
@@ -79,9 +79,9 @@ public class BarbeiroIntegrationTest {
 
     @Test
     void testUpdateBarbeiroThrowsExceptionWhenNotFound() {
-        Barbeiro nonExistentBarbeiro = new Barbeiro("Pedro Mendes", "pedro@example.com", "1111111111", "22222222222", 1700.0, "Rua 3, Nº 30", LocalDate.now(), "11:00 - 20:00");
-        nonExistentBarbeiro.setBarbeiroById(99L);
+        Barbeiro nonExistentBarbeiro = new Barbeiro(null, "Pedro Mendes", "pedro@example.com", "1111111111", "22222222222", 1700.0, "Rua 3, Nº 30", LocalDate.now(), "11:00 - 20:00");
+        nonExistentBarbeiro.setBarbeiroId(99L);
 
-        assertThrows(ResourceNotFoundException.class, () -> barbeiroService.updateBarbeiro(nonExistentBarbeiro.getBarbeiroById(), nonExistentBarbeiro));
+        assertThrows(ResourceNotFoundException.class, () -> barbeiroService.updateBarbeiro(nonExistentBarbeiro.getBarbeiroId(), nonExistentBarbeiro));
     }
 }
