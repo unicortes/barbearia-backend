@@ -1,11 +1,9 @@
 package br.org.unicortes.barbearia.controllers;
 
 import br.org.unicortes.barbearia.models.Barbeiro;
-import br.org.unicortes.barbearia.models.Product;
 import br.org.unicortes.barbearia.dtos.BarbeiroDTO;
 import br.org.unicortes.barbearia.services.BarbeiroService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

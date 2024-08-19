@@ -3,7 +3,6 @@ package br.org.unicortes.barbearia.dtos;
 import java.time.LocalDate;
 import lombok.Data;
 
-
 @Data
 public class BarbeiroDTO {
     private Long barbeiroId;
