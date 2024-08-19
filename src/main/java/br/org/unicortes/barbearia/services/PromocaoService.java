@@ -1,11 +1,11 @@
-package br.org.unicortes.barbearia.service;
+package br.org.unicortes.barbearia.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.org.unicortes.barbearia.model.Promocao;
-import br.org.unicortes.barbearia.repository.PromocaoRepository;
+import br.org.unicortes.barbearia.models.Promocao;
+import br.org.unicortes.barbearia.repositories.PromocaoRepository;
 
 @Service
 public class PromocaoService implements PromocaoServiceInterface{

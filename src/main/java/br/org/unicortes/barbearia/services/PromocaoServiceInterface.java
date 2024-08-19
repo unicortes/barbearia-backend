@@ -1,9 +1,9 @@
-package br.org.unicortes.barbearia.service;
+package br.org.unicortes.barbearia.services;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
-import br.org.unicortes.barbearia.model.Promocao;
+import br.org.unicortes.barbearia.models.Promocao;
 
 public interface PromocaoServiceInterface {
 

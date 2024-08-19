@@ -1,4 +1,4 @@
-package br.org.unicortes.barbearia.model;
+package br.org.unicortes.barbearia.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;

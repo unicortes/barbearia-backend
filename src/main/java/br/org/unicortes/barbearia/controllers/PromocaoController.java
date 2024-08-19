@@ -1,4 +1,4 @@
-package br.org.unicortes.barbearia.controller;
+package br.org.unicortes.barbearia.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.org.unicortes.barbearia.model.Promocao;
-import br.org.unicortes.barbearia.service.PromocaoService;
+import br.org.unicortes.barbearia.models.Promocao;
+import br.org.unicortes.barbearia.services.PromocaoService;
 
 @RestController
 @RequestMapping("/api/promocoes/")
