@@ -1,7 +1,5 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.exceptions.ProductNotFoundException;
-import br.org.unicortes.barbearia.exceptions.SaleNotFoundException;
 import br.org.unicortes.barbearia.models.Sale;
 import br.org.unicortes.barbearia.repositories.SaleRepository;
 import jakarta.transaction.Transactional;
@@ -18,8 +16,7 @@ public class SaleService {
 
     @Transactional
     public Sale getSaleById(Long id){
-        return saleRepository.findBySaleId(id)
-                .orElseThrow(() -> new SaleNotFoundException(id));
+        return saleRepository.findBySaleId(id);
     }
 
     //inserir (rollbackFor = Throwable.class) quando criar exceção

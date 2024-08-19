@@ -8,5 +8,4 @@ public class SaleForLoyaltyCardDTO extends SaleDTO{
 
     private LoyaltyCard loyaltyCard;
 
-
 }
