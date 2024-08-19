@@ -17,7 +17,7 @@ import lombok.Data;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity(name = "tb_barbeiro")
+@Entity(name = "tb_barber")
 public class Barber {
 
     @Id
