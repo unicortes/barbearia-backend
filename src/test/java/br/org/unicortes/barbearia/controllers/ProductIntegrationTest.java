@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 
-import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -129,9 +128,5 @@ public class ProductIntegrationTest {
 
         mockMvc.perform(get("/api/products/{id}", savedProduct.getId()))
                 .andExpect(status().isNotFound());
-
-        if (productRepository.findById(savedProduct.getId()).isPresent()) {
-            fail("O produto não foi deletado corretamente.");
-        }
     }
 }

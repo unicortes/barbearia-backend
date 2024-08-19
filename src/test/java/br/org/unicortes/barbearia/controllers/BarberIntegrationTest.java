@@ -38,7 +38,7 @@ public class BarberIntegrationTest {
         Barber savedBarber = barberService.createBarber(barber);
         assertNotNull(savedBarber);
         assertNotNull(savedBarber.getBarberId());
-        assertEquals(barber.getNome(), savedBarber.getNome());
+        assertEquals(barber.getName(), savedBarber.getName());
 
         Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getBarberId());
         assertTrue(foundBarber.isPresent());
@@ -47,14 +47,14 @@ public class BarberIntegrationTest {
     @Test
     void testUpdateBarber() {
         Barber savedBarber = barberService.createBarber(barber);
-        savedBarber.setNome("Carlos Souza");
+        savedBarber.setName("Carlos Souza");
         Barber updatedBarber = barberService.updateBarber(savedBarber.getBarberId(), savedBarber);
         assertNotNull(updatedBarber);
-        assertEquals("Carlos Souza", updatedBarber.getNome());
+        assertEquals("Carlos Souza", updatedBarber.getName());
 
         Optional<Barber> foundBarber = barberRepository.findById(updatedBarber.getBarberId());
         assertTrue(foundBarber.isPresent());
-        assertEquals("Carlos Souza", foundBarber.get().getNome());
+        assertEquals("Carlos Souza", foundBarber.get().getName());
     }
 
     @Test

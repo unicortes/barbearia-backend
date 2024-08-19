@@ -44,7 +44,7 @@ public class BarberController {
     private BarberDTO convertToDTO(Barber barber) {
         BarberDTO barberDTO = new BarberDTO();
         barberDTO.setBarberId(barber.getBarberId());
-        barberDTO.setNome(barber.getNome());
+        barberDTO.setName(barber.getName());
         barberDTO.setBarberEmail(barber.getBarberEmail());
         barberDTO.setBarberTelefone(barber.getBarberTelefone());
         barberDTO.setBarberCpf(barber.getBarberCpf());
@@ -58,7 +58,7 @@ public class BarberController {
     private Barber convertToEntity(BarberDTO barberDTO) {
         Barber barber = new Barber();
         barber.setBarberId(barberDTO.getBarberId());
-        barber.setNome(barberDTO.getNome());
+        barber.setName(barberDTO.getName());
         barber.setBarberEmail(barberDTO.getBarberEmail());
         barber.setBarberTelefone(barberDTO.getBarberTelefone());
         barber.setBarberCpf(barberDTO.getBarberCpf());

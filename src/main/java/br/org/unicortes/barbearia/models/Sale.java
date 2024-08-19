@@ -10,6 +10,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "tb_sale")
+@Inheritance
 public class Sale {
 
     @Id
