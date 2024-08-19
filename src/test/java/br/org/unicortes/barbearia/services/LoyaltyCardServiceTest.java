@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,13 +47,14 @@ public class LoyaltyCardServiceTest {
     @Test
     void testGetLoyaltyCard() {
         LoyaltyCard loyaltyCard = new LoyaltyCard();
-        when(loyaltyCardRepository.findById(anyInt())).thenReturn(loyaltyCard);
+        when(loyaltyCardRepository.findById(1L)).thenReturn(Optional.of(loyaltyCard));
 
         LoyaltyCard result = loyaltyCardService.getLoyaltyCard(1L);
 
         assertEquals(loyaltyCard, result);
-        verify(loyaltyCardRepository, times(1)).findById(1);
+        verify(loyaltyCardRepository, times(1)).findById(1L);
     }
+
 
     @Test
     void testDeleteLoyaltyCard() {
@@ -83,7 +85,7 @@ public class LoyaltyCardServiceTest {
         SaleForLoyaltyCard saleForLoyaltyCard = new SaleForLoyaltyCard();
         LoyaltyCard loyaltyCard = new LoyaltyCard();
 
-        when(loyaltyCardRepository.findByClient((long) anyInt())).thenReturn(loyaltyCard);
+        when(loyaltyCardRepository.findByClientId((long) anyInt())).thenReturn(loyaltyCard);
         when(saleForLoyaltyCardRepository.save(any(SaleForLoyaltyCard.class))).thenReturn(saleForLoyaltyCard);
 
         loyaltyCardService.createBirthdaySale(client, saleForLoyaltyCard);

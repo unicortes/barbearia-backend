@@ -14,8 +14,8 @@ public class BarberService {
     private BarberRepository barberRepository;
 
     public Barber createBarber(Barber barber) {
-        if (barberRepository.existsByName(barber.getNome())) {
-            throw new BarberAlreadyExistsException(barber.getNome());
+        if (barberRepository.existsByName(barber.getName())) {
+            throw new BarberAlreadyExistsException(barber.getName());
         }
         return barberRepository.save(barber);
     }
@@ -23,7 +23,7 @@ public class BarberService {
     public Barber updateBarber(Long id, Barber barberAtualizado) {
         Barber barber = barberRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id));
-        barber.setNome(barberAtualizado.getNome());
+        barber.setName(barberAtualizado.getName());
         barber.setBarberEmail(barberAtualizado.getBarberEmail());
         barber.setBarberTelefone(barberAtualizado.getBarberTelefone());
         barber.setBarberCpf(barberAtualizado.getBarberCpf());

@@ -39,7 +39,7 @@ public class BarberServiceTest {
         Barber createdBarber = barberService.createBarber(barber);
 
         assertNotNull(createdBarber);
-        assertEquals(barber.getNome(), createdBarber.getNome());
+        assertEquals(barber.getName(), createdBarber.getName());
         verify(barberRepository, times(1)).save(barber);
     }
 

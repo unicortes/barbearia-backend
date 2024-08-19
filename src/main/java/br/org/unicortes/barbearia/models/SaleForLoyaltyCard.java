@@ -10,15 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "tb_saleForLoyaltyCard")
-public class SaleForLoyaltyCard extends Sale{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class SaleForLoyaltyCard extends Sale {
     @NotNull(message = "A promoção precisa estar associada a um cartão fidelidade")
     @OneToOne
     @JoinColumn(name = "loyalty_card_id", nullable = false)
     private LoyaltyCard loyaltyCard;
-
-
 }

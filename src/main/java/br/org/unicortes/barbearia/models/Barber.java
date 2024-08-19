@@ -25,7 +25,7 @@ public class Barber {
     private Long barberId;
 
     @NotBlank(message = "O nome é obrigatório")
-    private String nome;
+    private String name;
 
     @Email(message = "O e-mail deve ser válido")
     @NotBlank(message = "O e-mail é obrigatório")
