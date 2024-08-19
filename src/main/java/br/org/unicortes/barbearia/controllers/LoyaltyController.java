@@ -21,7 +21,7 @@ public class LoyaltyController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<LoyaltyCardDTO> getSaleById(@PathVariable int id) throws Exception {
+    public ResponseEntity<LoyaltyCardDTO> getSaleById(@PathVariable Long id) throws Exception {
         LoyaltyCard loyaltyCard = this.loyaltyCardService.getLoyaltyCard(id);
         return ResponseEntity.ok(convertToDto(loyaltyCard));
     }
@@ -58,7 +58,7 @@ public class LoyaltyController {
     }*/
 
     @PostMapping(path = "/sale/newSaleForLoyalty/{id}")
-    public ResponseEntity<Void> createLoyaltySale(@RequestParam int loyaltyCardId, @RequestBody SaleForLoyaltyCard saleForLoyaltyCard) {
+    public ResponseEntity<Void> createLoyaltySale(@RequestParam Long loyaltyCardId, @RequestBody SaleForLoyaltyCard saleForLoyaltyCard) {
         LoyaltyCard lc = this.loyaltyCardService.getLoyaltyCard(loyaltyCardId);
         this.loyaltyCardService.createSaleForLoyaltyCard(saleForLoyaltyCard, lc);
 

@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbLoyaltyCards")
+@Table(name = "tb_loyaltyCards")
 public class LoyaltyCard {
 
     @Id

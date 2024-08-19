@@ -19,7 +19,7 @@ public class SaleController {
     private SaleService saleService;
 
     @GetMapping(path = "/sale/{id}")
-    public ResponseEntity<SaleDTO> getSaleById(@PathVariable int id) throws Exception {
+    public ResponseEntity<SaleDTO> getSaleById(@PathVariable Long id) throws Exception {
         Sale sale = this.saleService.getSaleById(id);
         return ResponseEntity.ok(convertToDto(sale));
     }

@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "tb_saleForLoyaltyCard")
 public class SaleForLoyaltyCard extends Sale{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
