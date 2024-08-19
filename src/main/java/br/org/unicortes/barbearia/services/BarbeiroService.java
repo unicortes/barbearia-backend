@@ -1,11 +1,12 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.models.Product;
+import br.org.unicortes.barbearia.models.Barbeiro;
 import br.org.unicortes.barbearia.exceptions.ProductAlreadyExistsException;
 import br.org.unicortes.barbearia.exceptions.ProductNotFoundException;
-import br.org.unicortes.barbearia.repositories.ProductRepository;
+import br.org.unicortes.barbearia.repositories.BarbeiroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class BarbeiroService {
@@ -28,7 +29,6 @@ public class BarbeiroService {
         barbeiro.setBarbeiroByDataAdmissao(barbeiroAtualizado.getBarbeiroByDataAdmissao());
         barbeiro.setBarbeiroByHorariosAtendimento(barbeiroAtualizado.getBarbeiroByHorariosAtendimento());
         return barbeiroRepository.save(barbeiro);
-        bar
     }
 
     public void removerBarbeiro(Long id) {
