@@ -18,36 +18,36 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 @Entity(name = "tb_barbeiro")
-public class Barbeiro {
+public class Barber {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long barbeiroId;
+    private Long barberId;
 
     @NotBlank(message = "O nome é obrigatório")
-    private String barbeiroNome;
+    private String nome;
 
     @Email(message = "O e-mail deve ser válido")
     @NotBlank(message = "O e-mail é obrigatório")
-    private String barbeiroEmail;
+    private String barberEmail;
 
     @NotBlank(message = "O telefone é obrigatório")
-    private String barbeiroTelefone;
+    private String barberTelefone;
 
     @NotBlank(message = "O CPF é obrigatório")
     @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos")
-    private String barbeiroCpf;
+    private String barberCpf;
 
     @NotNull(message = "O salário é obrigatório")
     @PositiveOrZero(message = "O salário deve ser um valor positivo ou zero")
-    private Double barbeiroSalario;
+    private Double barberSalario;
 
     @NotBlank(message = "O endereço é obrigatório")
-    private String barbeiroEndereco;
+    private String barberEndereco;
 
     @NotNull(message = "A data de admissão é obrigatória")
-    private LocalDate barbeiroDataDeAdimissao;
+    private LocalDate barberDataDeAdimissao;
 
     @NotBlank(message = "Os horários de atendimento são obrigatórios")
-    private String barbeiroHorariosAtendimento;
+    private String barberHorariosAtendimento;
 }

@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
-    @ExceptionHandler(BarbeiroAlreadyExistsException.class) //Exceção criada, para quando um barbeiro ja existir 
-    public ResponseEntity<ErrorDetails> handleBarbeiroAlreadyExistsException(BarbeiroAlreadyExistsException ex, WebRequest request) {
+    @ExceptionHandler(BarberAlreadyExistsException.class) //Exceção criada, para quando um barbeiro ja existir 
+    public ResponseEntity<ErrorDetails> handleBarberAlreadyExistsException(BarberAlreadyExistsException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
