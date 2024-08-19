@@ -1,5 +1,7 @@
 package br.org.unicortes.barbearia.services;
 
+import br.org.unicortes.barbearia.exceptions.ClientNotFoundException;
+import br.org.unicortes.barbearia.exceptions.LoyaltyCardNotFoundException;
 import br.org.unicortes.barbearia.models.Client;
 import br.org.unicortes.barbearia.models.LoyaltyCard;
 import br.org.unicortes.barbearia.models.SaleForLoyaltyCard;
@@ -36,8 +38,9 @@ public class LoyaltyCardService {
     }
 
     @Transactional
-    public LoyaltyCard getLoyaltyCard(int id) {
-        return this.loyaltyCardRepository.findById(id);
+    public LoyaltyCard getLoyaltyCard(Long id) {
+        return this.loyaltyCardRepository.findById(id)
+                .orElseThrow(() -> new LoyaltyCardNotFoundException(id));
     }
 
     @Transactional
@@ -52,11 +55,15 @@ public class LoyaltyCardService {
 
     @Transactional
     public void createBirthdaySale(Client client, SaleForLoyaltyCard saleForLoyaltyCard) {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate clientBirthday = client.getBirthday();
-        LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClient(client.getId());
-        if (clientBirthday.equals(currentDate)) {
-            this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
+        try{
+            LocalDate currentDate = LocalDate.now();
+            LocalDate clientBirthday = client.getBirthday();
+            LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClient(client.getId());
+            if (clientBirthday.equals(currentDate)) {
+                this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
+            }
+        }catch(ClientNotFoundException e){
+            System.out.println(e.getMessage());
         }
     }
 

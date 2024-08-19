@@ -45,7 +45,7 @@ public class SaleServiceTest {
 
     @Test
     public void testGetSaleById() {
-        int saleId = 1;
+        Long saleId = 1L;
         sale.setSaleId(saleId);
 
         when(saleRepository.findBySaleId(saleId)).thenReturn(sale);
@@ -59,7 +59,7 @@ public class SaleServiceTest {
 
     @Test
     public void testGetSaleByIdNonExisting() {
-        int saleId = 2;
+        Long saleId = 2L;
 
         when(saleRepository.findBySaleId(saleId)).thenReturn(null);
 
