@@ -3,15 +3,21 @@ package br.org.unicortes.barbearia.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import br.org.unicortes.barbearia.models.Promocao;
 import br.org.unicortes.barbearia.repositories.PromocaoRepository;
 
 @Service
-public class PromocaoService implements PromocaoServiceInterface{
+public class PromocaoService{
 
     @Autowired
 	private PromocaoRepository repository;
+
+    @Transactional
+    public List<Promocao> getAllPromocao(){
+		return repository.findAll();
+	}
 
     @Transactional
     public Promocao savePromocao(Promocao promocao){

@@ -2,14 +2,16 @@ package br.org.unicortes.barbearia.models;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import br.org.unicortes.barbearia.models.Product;
+import jakarta.validation.constraints.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -26,25 +28,39 @@ public class Promocao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "O título é obrigatório")
     private String titulo;
+
+    @NotBlank(message = "A descrição é obrigatória")
     private String descricao;
+
+    @NotBlank(message = "O código da promoção é obrigatório")
     private String codigoPromocao;
+
+    @NotBlank(message = "A categoria é obrigatória")
     private String categoria;
+
+    @NotBlank(message = "O desconto é obrigatório")
     private double desconto;
+
+    @NotBlank(message = "A disponibilidade é obrigatório")
     private boolean disponibilidade;
     
+    @NotNull(message = "A data de admissão é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataInicio;
+
+    @NotNull(message = "A data de admissão é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataFim;
 
     @ManyToMany
     @JoinTable(
-        name = "promocao_produto",
+        name = "promocao_product",
         joinColumns = @JoinColumn(name = "promocao_id"),
-        inverseJoinColumns = @JoinColumn(name = "produto_id")
+        inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Produto> produtos = new HashSet<>();
+    private Set<Product> produtos = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
