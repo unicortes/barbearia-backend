@@ -19,7 +19,7 @@ import br.org.unicortes.barbearia.models.Promocao;
 import br.org.unicortes.barbearia.services.PromocaoService;
 
 @RestController
-@RequestMapping("/api/promocoes/")
+@RequestMapping("/api/promocoes")
 public class PromocaoController {
 
     @Autowired
