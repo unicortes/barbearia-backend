@@ -21,7 +21,7 @@ public class LoyaltyCard {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loyalty_card_seq")
     @SequenceGenerator(name = "loyalty_card_seq", sequenceName = "loyalty_card_sequence", allocationSize = 1)
     @Column(name = "loyalty_card_id")
-    private long id;
+    private Long id;
 
     @NotBlank(message = "O campo 'cliente' é obrigatório")
     @OneToOne(cascade = CascadeType.ALL)
