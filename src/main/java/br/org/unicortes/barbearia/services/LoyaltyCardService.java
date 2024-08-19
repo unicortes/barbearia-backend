@@ -27,6 +27,15 @@ public class LoyaltyCardService {
     }
 
     @Transactional
+    public LoyaltyCard updateLoyaltyCard(LoyaltyCard loyaltyCard){
+        if (!loyaltyCardRepository.existsById(loyaltyCard.getId())){
+            return null;
+        }else{
+            return loyaltyCardRepository.save(loyaltyCard);
+        }
+    }
+
+    @Transactional
     public LoyaltyCard getLoyaltyCard(int id) {
         return this.loyaltyCardRepository.findById(id);
     }
@@ -45,8 +54,16 @@ public class LoyaltyCardService {
     public void createBirthdaySale(Client client, SaleForLoyaltyCard saleForLoyaltyCard) {
         LocalDate currentDate = LocalDate.now();
         LocalDate clientBirthday = client.getBirthday();
+        LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClient(client.getId());
         if (clientBirthday.equals(currentDate)) {
-            this.createSaleForLoyaltyCard(saleForLoyaltyCard);
+            this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
+        }
+    }
+
+    @Transactional
+    public void createLoyaltySale(LoyaltyCard loyaltyCard, SaleForLoyaltyCard saleForLoyaltyCard){
+        if (loyaltyCard.getServicesAquired().size() == 10){
+            this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
         }
     }
 }

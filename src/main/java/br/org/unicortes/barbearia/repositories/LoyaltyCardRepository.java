@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoyaltyCardRepository extends JpaRepository<LoyaltyCard, Long> {
     public LoyaltyCard findById(int id);
+    public LoyaltyCard findByClient(long clientId);
 }

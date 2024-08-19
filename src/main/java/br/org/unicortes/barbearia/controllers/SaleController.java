@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.controllers;
 
 import br.org.unicortes.barbearia.dtos.SaleDTO;
+import br.org.unicortes.barbearia.dtos.SaleForLoyaltyCardDTO;
 import br.org.unicortes.barbearia.models.Sale;
 import br.org.unicortes.barbearia.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class SaleController {
     private SaleService saleService;
 
     @GetMapping(path = "/sale/{id}")
-    public ResponseEntity<SaleDTO> getSaleById(@PathVariable int id) throws Exception{
+    public ResponseEntity<SaleDTO> getSaleById(@PathVariable int id) throws Exception {
         Sale sale = this.saleService.getSaleById(id);
         return ResponseEntity.ok(convertToDto(sale));
     }
@@ -31,27 +32,30 @@ public class SaleController {
     }
 
     @PutMapping(path = "/sale/edit/{id}")
-    public ResponseEntity<SaleDTO> updateSale(@RequestBody SaleDTO saleDto) throws Exception {
+    public ResponseEntity<SaleDTO> updateSale(@PathVariable Long id, @RequestBody SaleDTO saleDto) throws Exception {
         Sale sale = convertToSale(saleDto);
+        sale.setSaleId(id); // Ensure the correct ID is set for the update
         Sale updatedSale = this.saleService.updateSale(sale);
         return ResponseEntity.ok(convertToDto(updatedSale));
     }
 
     @DeleteMapping(path = "/sale/delete/{id}")
-    public ResponseEntity<Void> deleteSale(@PathVariable Long saleId){
-        this.saleService.deleteSale(saleId);
+    public ResponseEntity<Void> deleteSale(@PathVariable Long id) {
+        this.saleService.deleteSale(id);
         return ResponseEntity.noContent().build();
     }
 
+
+
     @GetMapping(path = "/")
-    public ResponseEntity<List<SaleDTO>> findAllSales(){
+    public ResponseEntity<List<SaleDTO>> findAllSales() {
         List<SaleDTO> allSales = this.saleService.getAllSales().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(allSales);
     }
 
-    private SaleDTO convertToDto(Sale sale){
+    private SaleDTO convertToDto(Sale sale) {
         SaleDTO saleDto = new SaleDTO();
         saleDto.setSaleId(sale.getSaleId());
         saleDto.setSaleName(sale.getSaleName());
@@ -61,19 +65,18 @@ public class SaleController {
         saleDto.setSaleExpirationDate(sale.getSaleExpirationDate());
         saleDto.setSaleCategory(sale.getSaleCategory());
         saleDto.setSaleAvailability(sale.isSaleAvailability());
+        return saleDto;
     }
 
-    private Sale convertToSale(SaleDTO saleDto){
+    private Sale convertToSale(SaleDTO saleDto) {
         Sale sale = new Sale();
-        sale.setSaleId(sale.getSaleId());
-        sale.setSaleName(sale.getSaleName());
-        sale.setSaleDescription(sale.getSaleDescription());
-        sale.setSalePromoCode(sale.getSalePromoCode());
-        sale.setSaleDiscount(sale.getSaleDiscount());
-        sale.setSaleExpirationDate(sale.getSaleExpirationDate());
-        sale.setSaleCategory(sale.getSaleCategory());
-        sale.setSaleAvailability(sale.isSaleAvailability());
+        sale.setSaleName(saleDto.getSaleName());
+        sale.setSaleDescription(saleDto.getSaleDescription());
+        sale.setSalePromoCode(saleDto.getSalePromoCode());
+        sale.setSaleDiscount(saleDto.getSaleDiscount());
+        sale.setSaleExpirationDate(saleDto.getSaleExpirationDate());
+        sale.setSaleCategory(saleDto.getSaleCategory());
+        sale.setSaleAvailability(saleDto.isSaleAvailability());
+        return sale;
     }
-
-
 }

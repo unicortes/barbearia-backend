@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +20,11 @@ public class Client {
     @Column(name = "client_id")
     private long id;
 
+    @NotBlank(message = "O campo 'birthday' é obrigatório")
     @Column(name = "client_birthday")
     private LocalDate birthday;
 
+    @NotBlank(message = "O campo 'email' é obrigatório")
     @Column(name = "client_email")
     private String email;
 }
