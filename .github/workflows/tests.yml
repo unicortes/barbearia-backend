@@ -21,8 +21,10 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-      - name: Build with maven and run Test
-        run: mnv test -B package --file pom.xml
+          distribution: 'temurin'
+
+      - name: Build with Maven and run tests
+        run: mvn test -B package --file pom.xml
 
       - name: Test Report Generation
         uses: actions/upload-artifact@v4
@@ -30,5 +32,3 @@ jobs:
         with:
           name: TestNG Report
           path: target/surefire-reports/testng-results.xml
-
-
