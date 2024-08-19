@@ -1,6 +1,6 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.models.SaleModel;
+import br.org.unicortes.barbearia.models.Sale;
 import br.org.unicortes.barbearia.repositories.SaleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +15,18 @@ public class SaleService {
     private SaleRepository saleRepository;
 
     @Transactional
-    public SaleModel getSaleById(int id){
+    public Sale getSaleById(int id){
         return saleRepository.findBySaleId(id);
     }
 
     //inserir (rollbackFor = Throwable.class) quando criar exceção
     @Transactional
-    public SaleModel createSale(SaleModel sale){
+    public Sale createSale(Sale sale){
         return saleRepository.save(sale);
     }
     //inserir (rollbackFor = Throwable.class) quando criar exceção
     @Transactional
-    public SaleModel updateSale(SaleModel sale){
+    public Sale updateSale(Sale sale){
         if (!saleRepository.existsById(sale.getSaleId())){
             return null;
         }else{
@@ -40,7 +40,7 @@ public class SaleService {
         saleRepository.deleteById(saleId);
     }
 
-    public List<SaleModel> getAllSales() {
+    public List<Sale> getAllSales() {
         return saleRepository.findAll();
     }
 

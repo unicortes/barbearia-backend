@@ -1,11 +1,10 @@
 package br.org.unicortes.barbearia.repositories;
 
-import br.org.unicortes.barbearia.models.Sale;
+import br.org.unicortes.barbearia.models.SaleForLoyaltyCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SaleRepository extends JpaRepository<Sale, Long> {
+public interface SaleForLoyaltyCardRepository extends JpaRepository<SaleForLoyaltyCard, Long> {
 
-    Sale findBySaleId(int id);
 }

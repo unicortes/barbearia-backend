@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "tbSales")
-public class SaleModel {
+public class Sale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sale_seq")

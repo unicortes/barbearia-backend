@@ -1,0 +1,52 @@
+package br.org.unicortes.barbearia.services;
+
+import br.org.unicortes.barbearia.models.Client;
+import br.org.unicortes.barbearia.models.LoyaltyCard;
+import br.org.unicortes.barbearia.models.SaleForLoyaltyCard;
+import br.org.unicortes.barbearia.repositories.LoyaltyCardRepository;
+import br.org.unicortes.barbearia.repositories.SaleForLoyaltyCardRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Date;
+
+@Service
+public class LoyaltyCardService {
+
+    @Autowired
+    private LoyaltyCardRepository loyaltyCardRepository;
+
+    @Autowired
+    private SaleForLoyaltyCardRepository saleForLoyaltyCardRepository;
+
+    @Transactional
+    public LoyaltyCard createLoyaltyCard(LoyaltyCard loyaltyCard) {
+        return this.loyaltyCardRepository.save(loyaltyCard);
+    }
+
+    @Transactional
+    public LoyaltyCard getLoyaltyCard(int id) {
+        return this.loyaltyCardRepository.findById(id);
+    }
+
+    @Transactional
+    public void deleteLoyaltyCard(Long saleId){
+        this.loyaltyCardRepository.deleteById(saleId);
+    }
+
+    @Transactional
+    public SaleForLoyaltyCard createSaleForLoyaltyCard(SaleForLoyaltyCard saleForLoyaltyCard, LoyaltyCard loyaltyCard) {
+        return this.saleForLoyaltyCardRepository.save(saleForLoyaltyCard);
+    }
+
+    @Transactional
+    public void createBirthdaySale(Client client, SaleForLoyaltyCard saleForLoyaltyCard) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate clientBirthday = client.getBirthday();
+        if (clientBirthday.equals(currentDate)) {
+            this.createSaleForLoyaltyCard(saleForLoyaltyCard);
+        }
+    }
+}
