@@ -16,7 +16,7 @@ public class Barbeiro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer barbeiroId;
+    private Long barbeiroId;
 
     @NotBlank(message = "O nome é obrigatório")
     private String barbeiroNome;
@@ -62,11 +62,11 @@ public class Barbeiro {
     }
 
     // Getters e Setters
-    public Integer getBarbeiroById() {
+    public Long getBarbeiroById() {
         return barbeiroId;
     }
 
-    public void setBarbeiroById(Integer barbeiroId) {
+    public void setBarbeiroById(Long barbeiroId) {
         this.barbeiroId = barbeiroId;
     }
 

@@ -1,8 +1,7 @@
 package br.org.unicortes.barbearia.services;
 
 import br.org.unicortes.barbearia.models.Barbeiro;
-import br.org.unicortes.barbearia.exceptions.ProductAlreadyExistsException;
-import br.org.unicortes.barbearia.exceptions.ProductNotFoundException;
+import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import br.org.unicortes.barbearia.repositories.BarbeiroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,11 @@ public class BarbeiroService {
     @Autowired
     private BarbeiroRepository barbeiroRepository;
 
-    public Barbeiro registrarBarbeiro(Barbeiro barbeiro) {
+    public Barbeiro createBarbeiro(Barbeiro barbeiro) {
         return barbeiroRepository.save(barbeiro);
     }
 
-    public Barbeiro editarBarbeiro(Long id, Barbeiro barbeiroAtualizado) {
+    public Barbeiro updateBarbeiro(Long id, Barbeiro barbeiroAtualizado) {
         Barbeiro barbeiro = barbeiroRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado com ID: " + id));
         barbeiro.setBarbeiroByNome(barbeiroAtualizado.getBarbeiroByNome());
@@ -31,7 +30,7 @@ public class BarbeiroService {
         return barbeiroRepository.save(barbeiro);
     }
 
-    public void removerBarbeiro(Long id) {
+    public void deleteBarbeiro(Long id) {
         Barbeiro barbeiro = barbeiroRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado com ID: " + id));
         barbeiroRepository.delete(barbeiro);
