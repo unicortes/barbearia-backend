@@ -1,6 +1,15 @@
-import jakarta.persistence.*;
+package br.org.unicortes.barbearia.models;
+
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 public class Barbeiro {
