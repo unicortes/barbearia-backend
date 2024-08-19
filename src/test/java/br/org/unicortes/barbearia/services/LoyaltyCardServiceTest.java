@@ -48,7 +48,7 @@ public class LoyaltyCardServiceTest {
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         when(loyaltyCardRepository.findById(anyInt())).thenReturn(loyaltyCard);
 
-        LoyaltyCard result = loyaltyCardService.getLoyaltyCard(1);
+        LoyaltyCard result = loyaltyCardService.getLoyaltyCard(1L);
 
         assertEquals(loyaltyCard, result);
         verify(loyaltyCardRepository, times(1)).findById(1);

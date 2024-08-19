@@ -46,7 +46,7 @@ public class LoyaltyCardIntegrationTest {
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
         loyaltyCard.setServicesAquired(new ArrayList<>());
-        loyaltyCard.setId(1);
+        loyaltyCard.setId(1L);
 
         mockMvc.perform(post("/api/loyaltyCards/newLoyaltyCard")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class LoyaltyCardIntegrationTest {
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
         loyaltyCard.setServicesAquired(new ArrayList<>());
-        loyaltyCard.setId(1);
+        loyaltyCard.setId(1L);
 
         mockMvc.perform(get("/api/loyaltyCards/{id}", loyaltyCard.getId()))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ public class LoyaltyCardIntegrationTest {
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
         loyaltyCard.setServicesAquired(new ArrayList<>());
-        loyaltyCard.setId(1);
+        loyaltyCard.setId(1L);
         LoyaltyCard updatedCard = new LoyaltyCard();
         updatedCard.setClient(new Client());
         updatedCard.setAdmissionDate(date);
@@ -109,7 +109,7 @@ public class LoyaltyCardIntegrationTest {
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
         loyaltyCard.setServicesAquired(new ArrayList<>());
-        loyaltyCard.setId(1);
+        loyaltyCard.setId(1L);
 
         LoyaltyCard updatedCard = new LoyaltyCard();
         updatedCard.setClient(new Client());
@@ -130,7 +130,7 @@ public class LoyaltyCardIntegrationTest {
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
         loyaltyCard.setServicesAquired(new ArrayList<>());
-        loyaltyCard.setId(1);
+        loyaltyCard.setId(1L);
 
         SaleForLoyaltyCard saleForLoyaltyCard = new SaleForLoyaltyCard();
         saleForLoyaltyCard.setSaleName("Aniversário");
