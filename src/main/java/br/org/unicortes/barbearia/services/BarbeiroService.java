@@ -22,7 +22,7 @@ public class BarbeiroService {
 
     public Barbeiro updateBarbeiro(Long id, Barbeiro barbeiroAtualizado) {
         Barbeiro barbeiro = barbeiroRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado com ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException(id));
         barbeiro.setBarbeiroNome(barbeiroAtualizado.getBarbeiroNome());
         barbeiro.setBarbeiroEmail(barbeiroAtualizado.getBarbeiroEmail());
         barbeiro.setBarbeiroTelefone(barbeiroAtualizado.getBarbeiroTelefone());
@@ -36,7 +36,7 @@ public class BarbeiroService {
 
     public void deleteBarbeiro(Long id) {
         Barbeiro barbeiro = barbeiroRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado com ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException(id));
         barbeiroRepository.delete(barbeiro);
     }
 
