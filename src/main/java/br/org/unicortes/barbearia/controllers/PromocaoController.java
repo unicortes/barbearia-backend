@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,14 @@ public class PromocaoController {
     @GetMapping("/index")
 	public List<Promocao> getAllPromocao() {
         return promocaoService.getAllPromocao();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Promocao> getPromocaoById(@PathVariable Long id) {
+        Optional<Promocao> promocao = promocaoService.getPromocaoById(id);
+        return promocao
+                .map(promocaoItem -> ResponseEntity.ok(promocaoItem))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
     @PostMapping("/criar")

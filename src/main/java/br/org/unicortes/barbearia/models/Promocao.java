@@ -46,11 +46,11 @@ public class Promocao {
     @NotBlank(message = "A disponibilidade é obrigatório")
     private boolean disponibilidade;
     
-    @NotNull(message = "A data de admissão é obrigatória")
+    @NotNull(message = "A data de início é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataInicio;
 
-    @NotNull(message = "A data de admissão é obrigatória")
+    @NotNull(message = "A data final é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataFim;
 
