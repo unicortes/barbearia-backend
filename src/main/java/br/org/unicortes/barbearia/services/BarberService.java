@@ -24,13 +24,13 @@ public class BarberService {
         Barber barber = barberRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id));
         barber.setName(barberAtualizado.getName());
-        barber.setBarberEmail(barberAtualizado.getBarberEmail());
-        barber.setBarberTelefone(barberAtualizado.getBarberTelefone());
-        barber.setBarberCpf(barberAtualizado.getBarberCpf());
-        barber.setBarberSalario(barberAtualizado.getBarberSalario());
-        barber.setBarberEndereco(barberAtualizado.getBarberEndereco());
-        barber.setBarberDataDeAdimissao(barberAtualizado.getBarberDataDeAdimissao());
-        barber.setBarberHorariosAtendimento(barberAtualizado.getBarberHorariosAtendimento());
+        barber.setEmail(barberAtualizado.getEmail());
+        barber.setPhone(barberAtualizado.getPhone());
+        barber.setCpf(barberAtualizado.getCpf());
+        barber.setSalary(barberAtualizado.getSalary());
+        barber.setAddress(barberAtualizado.getAddress());
+        barber.setAdmissionDate(barberAtualizado.getAdmissionDate());
+        barber.setOpeningHours(barberAtualizado.getOpeningHours());
         return barberRepository.save(barber);
     }
 

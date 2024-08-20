@@ -29,7 +29,7 @@ public class BarberServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         barber = new Barber(null, "Gustavo", "gustavo@email.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
-        barber.setBarberId(1L);
+        barber.setId(1L);
     }
 
     // teste 1
@@ -52,7 +52,7 @@ public class BarberServiceTest {
         Barber updatedBarber = barberService.updateBarber(id, barber);
 
         assertNotNull(updatedBarber);
-        assertEquals(barber.getBarberId(), updatedBarber.getBarberId());
+        assertEquals(barber.getId(), updatedBarber.getId());
         verify(barberRepository, times(1)).findById(id);
         verify(barberRepository, times(1)).save(barber);
     }
@@ -91,4 +91,3 @@ public class BarberServiceTest {
         verify(barberRepository, times(0)).save(barber);
     }
 }
-
