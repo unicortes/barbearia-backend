@@ -22,32 +22,32 @@ public class Barber {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long barberId;
+    private Long id;
 
     @NotBlank(message = "O nome é obrigatório")
     private String name;
 
     @Email(message = "O e-mail deve ser válido")
     @NotBlank(message = "O e-mail é obrigatório")
-    private String barberEmail;
+    private String email;
 
     @NotBlank(message = "O telefone é obrigatório")
-    private String barberTelefone;
+    private String phone;
 
     @NotBlank(message = "O CPF é obrigatório")
     @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos")
-    private String barberCpf;
+    private String cpf;
 
     @NotNull(message = "O salário é obrigatório")
     @PositiveOrZero(message = "O salário deve ser um valor positivo ou zero")
-    private Double barberSalario;
+    private Double salary;
 
     @NotBlank(message = "O endereço é obrigatório")
-    private String barberEndereco;
+    private String address;
 
     @NotNull(message = "A data de admissão é obrigatória")
-    private LocalDate barberDataDeAdimissao;
+    private LocalDate admissionDate;
 
     @NotBlank(message = "Os horários de atendimento são obrigatórios")
-    private String barberHorariosAtendimento;
+    private String openingHours;
 }
