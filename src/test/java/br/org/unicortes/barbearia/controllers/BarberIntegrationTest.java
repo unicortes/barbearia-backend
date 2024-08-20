@@ -37,10 +37,10 @@ public class BarberIntegrationTest {
     void testCreateBarber() {
         Barber savedBarber = barberService.createBarber(barber);
         assertNotNull(savedBarber);
-        assertNotNull(savedBarber.getBarberId());
+        assertNotNull(savedBarber.getId());
         assertEquals(barber.getName(), savedBarber.getName());
 
-        Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getBarberId());
+        Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getId());
         assertTrue(foundBarber.isPresent());
     }
     
@@ -48,11 +48,11 @@ public class BarberIntegrationTest {
     void testUpdateBarber() {
         Barber savedBarber = barberService.createBarber(barber);
         savedBarber.setName("Carlos Souza");
-        Barber updatedBarber = barberService.updateBarber(savedBarber.getBarberId(), savedBarber);
+        Barber updatedBarber = barberService.updateBarber(savedBarber.getId(), savedBarber);
         assertNotNull(updatedBarber);
         assertEquals("Carlos Souza", updatedBarber.getName());
 
-        Optional<Barber> foundBarber = barberRepository.findById(updatedBarber.getBarberId());
+        Optional<Barber> foundBarber = barberRepository.findById(updatedBarber.getId());
         assertTrue(foundBarber.isPresent());
         assertEquals("Carlos Souza", foundBarber.get().getName());
     }
@@ -60,8 +60,8 @@ public class BarberIntegrationTest {
     @Test
     void testDeleteBarbeiro() {
         Barber savedBarber = barberService.createBarber(barber);
-        barberService.deleteBarber(savedBarber.getBarberId());
-        Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getBarberId());
+        barberService.deleteBarber(savedBarber.getId());
+        Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getId());
         assertFalse(foundBarber.isPresent());
     }
 
@@ -80,8 +80,8 @@ public class BarberIntegrationTest {
     @Test
     void testUpdateBarberThrowsExceptionWhenNotFound() {
         Barber nonExistentBarber = new Barber(null, "Pedro Mendes", "pedro@example.com", "1111111111", "22222222222", 1700.0, "Rua 3, Nº 30", LocalDate.now(), "11:00 - 20:00");
-        nonExistentBarber.setBarberId(99L);
+        nonExistentBarber.setId(99L);
 
-        assertThrows(ResourceNotFoundException.class, () -> barberService.updateBarber(nonExistentBarber.getBarberId(), nonExistentBarber));
+        assertThrows(ResourceNotFoundException.class, () -> barberService.updateBarber(nonExistentBarber.getId(), nonExistentBarber));
     }
 }
