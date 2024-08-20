@@ -12,10 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Entity(name = "tb_barber")
 public class Barber {
@@ -34,7 +30,7 @@ public class Barber {
     @NotBlank(message = "O telefone é obrigatório")
     private String phone;
 
-    @NotBlank(message = "O CPF é obrigatório")
+    //@NotBlank(message = "O CPF é obrigatório")
     @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos")
     private String cpf;
 

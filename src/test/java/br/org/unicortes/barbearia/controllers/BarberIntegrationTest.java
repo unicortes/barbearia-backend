@@ -30,20 +30,47 @@ public class BarberIntegrationTest {
     @BeforeEach
     void setUp() {
         barberRepository.deleteAll(); // Limpa o banco de dados antes de cada teste
-        barber = new Barber(null, "João Silva", "joao@example.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
+
+        // Inicialize o objeto barber com gets e sets
+        barber = new Barber();
+        barber.setId(1L);
+        barber.setName("João Silva");
+        barber.setEmail("joao@example.com");
+        barber.setPhone("1234567890");
+        barber.setCpf("12345678901");
+        barber.setSalary(1500.0);
+        barber.setAddress("Rua 1, Nº 10");
+        barber.setAdmissionDate(LocalDate.now());
+        barber.setOpeningHours("09:00 - 18:00");
     }
 
     @Test
     void testCreateBarber() {
+        // Crie um objeto Barber com todos os campos obrigatórios preenchidos
+        Barber barber = new Barber();
+        barber.setName("João Silva");
+        barber.setCpf("12345678901");
+        barber.setAddress("Rua 1, Nº 10");
+        barber.setAdmissionDate(LocalDate.of(2024, 8, 20));
+        barber.setEmail("joao@example.com");
+        barber.setOpeningHours("09:00 - 18:00");
+        barber.setPhone("1234567890");
+        barber.setSalary(1500.00);
+
+        // Salva o Barber
         Barber savedBarber = barberService.createBarber(barber);
+
+        // Verifique se o Barber foi salvo corretamente
         assertNotNull(savedBarber);
         assertNotNull(savedBarber.getId());
         assertEquals(barber.getName(), savedBarber.getName());
 
+        // Verifique se o Barber foi encontrado no repositório
         Optional<Barber> foundBarber = barberRepository.findById(savedBarber.getId());
         assertTrue(foundBarber.isPresent());
+        assertEquals(barber.getCpf(), foundBarber.get().getCpf());
     }
-    
+
     @Test
     void testUpdateBarber() {
         Barber savedBarber = barberService.createBarber(barber);
@@ -68,7 +95,7 @@ public class BarberIntegrationTest {
     @Test
     void testListAllBarbers() {
         Barber barbeiro1 = barberService.createBarber(barber);
-        Barber barbeiro2 = barberService.createBarber(new Barber(null, "Carlos Souza", "carlos@example.com", "0987654321", "10987654321", 1600.0, "Rua 2, Nº 20", LocalDate.now(), "10:00 - 19:00"));
+        Barber barbeiro2 = barberService.createBarber(new Barber());
         List<Barber> barbers = barberService.listAllBarbers();
 
         assertNotNull(barbers);
@@ -79,7 +106,7 @@ public class BarberIntegrationTest {
 
     @Test
     void testUpdateBarberThrowsExceptionWhenNotFound() {
-        Barber nonExistentBarber = new Barber(null, "Pedro Mendes", "pedro@example.com", "1111111111", "22222222222", 1700.0, "Rua 3, Nº 30", LocalDate.now(), "11:00 - 20:00");
+        Barber nonExistentBarber = new Barber();
         nonExistentBarber.setId(99L);
 
         assertThrows(ResourceNotFoundException.class, () -> barberService.updateBarber(nonExistentBarber.getId(), nonExistentBarber));

@@ -41,7 +41,7 @@ public class LoyaltyCardIntegrationTest {
     public void testCreateLoyaltyCard() throws Exception {
         Date date = new Date("2024-09-24");
         Client client = new Client();
-        client.setId(1);
+        client.setId(1L);
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
@@ -59,7 +59,7 @@ public class LoyaltyCardIntegrationTest {
     public void testGetLoyaltyCardById() throws Exception {
         Date date = new Date("2024-09-24");
         Client client = new Client();
-        client.setId(1);
+        client.setId(1L);
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
@@ -78,7 +78,7 @@ public class LoyaltyCardIntegrationTest {
     public void testUpdateLoyaltyCard() throws Exception {
         Date date = new Date("2024-09-24");
         Client client = new Client();
-        client.setId(1);
+        client.setId(1L);
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
@@ -104,7 +104,7 @@ public class LoyaltyCardIntegrationTest {
     public void testDeleteLoyaltyCard() throws Exception {
         Date date = new Date("2024-09-24");
         Client client = new Client();
-        client.setId(1);
+        client.setId(1L);
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setClient(client);
         loyaltyCard.setAdmissionDate(date);
@@ -124,7 +124,7 @@ public class LoyaltyCardIntegrationTest {
     public void testCreateLoyaltySale() throws Exception {
         Date date = new Date("2024-09-24");
         Client client = new Client();
-        client.setId(1);
+        client.setId(1L);
 
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setClient(client);
