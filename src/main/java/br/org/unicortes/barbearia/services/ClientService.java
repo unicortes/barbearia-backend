@@ -14,19 +14,19 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     public Client createClient(Client client) {
-        if (clientRepository.existsById(client.getId())) {
+        if (clientRepository.existsByName(client.getName())) {
             throw new ClientAlreadyExistsException(client.getName());
         }
         return clientRepository.save(client);
     }
 
-    public Client updateClient(Long id, Client clientAtualizado) {
+    public Client updateClient(Long id, Client clientDetails) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
-        client.setName(clientAtualizado.getName());
-        client.setEmail(clientAtualizado.getEmail());
-        client.setPhone(clientAtualizado.getPhone());
-        client.setBirthday(clientAtualizado.getBirthday());
+        client.setName(clientDetails.getName());
+        client.setEmail(clientDetails.getEmail());
+        client.setPhone(clientDetails.getPhone());
+        client.setBirthday(clientDetails.getBirthday());
         return clientRepository.save(client);
     }
 
@@ -36,7 +36,12 @@ public class ClientService {
         clientRepository.delete(client);
     }
 
-    public List<Client> listAllClients() {
+    public List<Client> getAllClients() {
         return clientRepository.findAll();
+    }
+
+    public Client getClientById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException(id));
     }
 }
