@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class BarberDTO {
-    private Long barberId;
+    private Long id;
     private String name;
-    private String barberEmail;
-    private String barberTelefone;
-    private String barberCpf;
-    private Double barberSalario;
-    private String barberEndereco;
-    private LocalDate barberDataDeAdimissao;
-    private String barberHorariosAtendimento;
+    private String email;
+    private String phone;
+    private String cpf;
+    private Double salary;
+    private String address;
+    private LocalDate admissionDate;
+    private String openingHours;
 }

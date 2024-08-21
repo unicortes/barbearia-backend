@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/barber")
 public class BarberController {
     @Autowired
@@ -17,7 +21,10 @@ public class BarberController {
 
     @PostMapping
     public ResponseEntity<BarberDTO> createBarber(@RequestBody BarberDTO barberDTO){
+
+        LocalDate localDate =LocalDate.now();
         Barber barber = convertToEntity(barberDTO);
+        barber.setAdmissionDate(localDate);
         Barber novoBarber = barberService.createBarber(barber);
         return ResponseEntity.ok(convertToDTO(novoBarber));
     }
@@ -43,29 +50,31 @@ public class BarberController {
 
     private BarberDTO convertToDTO(Barber barber) {
         BarberDTO barberDTO = new BarberDTO();
-        barberDTO.setBarberId(barber.getBarberId());
+        barberDTO.setId(barber.getId());
         barberDTO.setName(barber.getName());
-        barberDTO.setBarberEmail(barber.getBarberEmail());
-        barberDTO.setBarberTelefone(barber.getBarberTelefone());
-        barberDTO.setBarberCpf(barber.getBarberCpf());
-        barberDTO.setBarberSalario(barber.getBarberSalario());
-        barberDTO.setBarberEndereco(barber.getBarberEndereco());
-        barberDTO.setBarberDataDeAdimissao(barber.getBarberDataDeAdimissao());
-        barberDTO.setBarberHorariosAtendimento(barber.getBarberHorariosAtendimento());
+        barberDTO.setEmail(barber.getEmail());
+        barberDTO.setPhone(barber.getPhone());
+        barberDTO.setCpf(barber.getCpf());
+        barberDTO.setSalary(barber.getSalary());
+        barberDTO.setAddress(barber.getAddress());
+        barberDTO.setAdmissionDate(barber.getAdmissionDate());
+        barberDTO.setOpeningHours(barber.getOpeningHours());
         return barberDTO;
     }
 
     private Barber convertToEntity(BarberDTO barberDTO) {
         Barber barber = new Barber();
-        barber.setBarberId(barberDTO.getBarberId());
+        if(barberDTO.getId()!=null){
+        barber.setId(barberDTO.getId());
+        }
         barber.setName(barberDTO.getName());
-        barber.setBarberEmail(barberDTO.getBarberEmail());
-        barber.setBarberTelefone(barberDTO.getBarberTelefone());
-        barber.setBarberCpf(barberDTO.getBarberCpf());
-        barber.setBarberSalario(barberDTO.getBarberSalario());
-        barber.setBarberEndereco(barberDTO.getBarberEndereco());
-        barber.setBarberDataDeAdimissao(barberDTO.getBarberDataDeAdimissao());
-        barber.setBarberHorariosAtendimento(barberDTO.getBarberHorariosAtendimento());
+        barber.setEmail(barberDTO.getEmail());
+        barber.setPhone(barberDTO.getPhone());
+        barber.setCpf(barberDTO.getCpf());
+        barber.setSalary(barberDTO.getSalary());
+        barber.setAddress(barberDTO.getAddress());
+        barber.setAdmissionDate(barberDTO.getAdmissionDate());
+        barber.setOpeningHours(barberDTO.getOpeningHours());
         return barber;
     }
 }

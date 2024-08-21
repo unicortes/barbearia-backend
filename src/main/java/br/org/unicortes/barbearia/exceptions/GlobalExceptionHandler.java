@@ -24,6 +24,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(ClientNotFoundException.class) //Exceção criada
+    public ResponseEntity<ErrorDetails> handleClientNotFoundException(ClientNotFoundException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ClientAlreadyExistsException.class)//Exceção criada
+    public ResponseEntity<ErrorDetails> handleClientAlreadyExistsException(ClientAlreadyExistsException ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(StockNotFoundException.class)//Exceção criada
     public ResponseEntity<ErrorDetails> handleStockNotFoundException(StockNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
