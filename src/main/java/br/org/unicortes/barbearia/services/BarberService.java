@@ -28,6 +28,9 @@ public class BarberService {
         barber.setPhone(barberAtualizado.getPhone());
         barber.setCpf(barberAtualizado.getCpf());
         barber.setSalary(barberAtualizado.getSalary());
+        barber.setAddress(barberAtualizado.getAddress());
+        barber.setAdmissionDate(barberAtualizado.getAdmissionDate());
+        barber.setOpeningHours(barberAtualizado.getOpeningHours());
         return barberRepository.save(barber);
     }
 
