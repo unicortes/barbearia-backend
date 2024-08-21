@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @CrossOrigin("*")
@@ -18,7 +21,10 @@ public class BarberController {
 
     @PostMapping
     public ResponseEntity<BarberDTO> createBarber(@RequestBody BarberDTO barberDTO){
+
+        LocalDate localDate =LocalDate.now();
         Barber barber = convertToEntity(barberDTO);
+        barber.setAdmissionDate(localDate);
         Barber novoBarber = barberService.createBarber(barber);
         return ResponseEntity.ok(convertToDTO(novoBarber));
     }
@@ -58,7 +64,9 @@ public class BarberController {
 
     private Barber convertToEntity(BarberDTO barberDTO) {
         Barber barber = new Barber();
+        if(barberDTO.getId()!=null){
         barber.setId(barberDTO.getId());
+        }
         barber.setName(barberDTO.getName());
         barber.setEmail(barberDTO.getEmail());
         barber.setPhone(barberDTO.getPhone());

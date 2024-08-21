@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -51,10 +52,24 @@ public class PromocaoIntegrationTest {
         Promocao promocao1 = new Promocao();
         promocao1.setId(1L);
         promocao1.setTitulo("Promoção 1");
+        promocao1.setDescricao("Descrição 1");
+        promocao1.setCodigoPromocao("PROMO1");
+        promocao1.setCategoria("Categoria 1");
+        promocao1.setDesconto(10.0);
+        promocao1.setDisponibilidade(true);
+        promocao1.setDataInicio(LocalDate.of(2024, 7, 1));
+        promocao1.setDataFim(LocalDate.of(2024, 7, 31));
 
         Promocao promocao2 = new Promocao();
         promocao2.setId(2L);
         promocao2.setTitulo("Promoção 2");
+        promocao2.setDescricao("Descrição 2");
+        promocao2.setCodigoPromocao("PROMO2");
+        promocao2.setCategoria("Categoria 2");
+        promocao2.setDesconto(15.0);
+        promocao2.setDisponibilidade(true);
+        promocao2.setDataInicio(LocalDate.of(2024, 8, 1));
+        promocao2.setDataFim(LocalDate.of(2024, 8, 31));
 
         when(promocaoService.getAllPromocao()).thenReturn(Arrays.asList(promocao1, promocao2));
 
@@ -67,12 +82,31 @@ public class PromocaoIntegrationTest {
 
     @Test
     public void testGetPromocaoById() throws Exception {
-        Long id = 1L;
-        Promocao promocao = new Promocao();
-        promocao.setId(id);
-        promocao.setTitulo("Promoção Encontrada");
+        Promocao promocao1 = new Promocao();
+        promocao1.setId(1L);
+        promocao1.setTitulo("Promoção Encontrada");
+        promocao1.setDescricao("Descrição 1");
+        promocao1.setCodigoPromocao("PROMO1");
+        promocao1.setCategoria("Categoria 1");
+        promocao1.setDesconto(10.0);
+        promocao1.setDisponibilidade(true);
+        promocao1.setDataInicio(LocalDate.of(2024, 7, 1));
+        promocao1.setDataFim(LocalDate.of(2024, 7, 31));
 
-        when(promocaoService.getPromocaoById(id)).thenReturn(Optional.of(promocao));
+        Promocao promocao2 = new Promocao();
+        promocao2.setId(2L);
+        promocao2.setTitulo("Promoção 2");
+        promocao2.setDescricao("Descrição 2");
+        promocao2.setCodigoPromocao("PROMO2");
+        promocao2.setCategoria("Categoria 2");
+        promocao2.setDesconto(15.0);
+        promocao2.setDisponibilidade(true);
+        promocao2.setDataInicio(LocalDate.of(2024, 8, 1));
+        promocao2.setDataFim(LocalDate.of(2024, 8, 31));
+
+        Long id = 1L;
+
+        when(promocaoService.getPromocaoById(id)).thenReturn(Optional.of(promocao1));
 
         mockMvc.perform(get("/api/promocoes/{id}", id))
                 .andExpect(status().isOk())
@@ -85,6 +119,13 @@ public class PromocaoIntegrationTest {
         Promocao promocao = new Promocao();
         promocao.setId(1L);
         promocao.setTitulo("Nova Promoção");
+        promocao.setDescricao("Descrição 1");
+        promocao.setCodigoPromocao("PROMO");
+        promocao.setCategoria("Categoria 1");
+        promocao.setDesconto(10.0);
+        promocao.setDisponibilidade(true);
+        promocao.setDataInicio(LocalDate.of(2024, 7, 1));
+        promocao.setDataFim(LocalDate.of(2024, 7, 31));
 
         when(promocaoService.savePromocao(any(Promocao.class))).thenReturn(promocao);
 
@@ -102,6 +143,13 @@ public class PromocaoIntegrationTest {
         Promocao promocao = new Promocao();
         promocao.setId(id);
         promocao.setTitulo("Promoção Atualizada");
+        promocao.setDescricao("Descrição 1");
+        promocao.setCodigoPromocao("PROMO");
+        promocao.setCategoria("Categoria 1");
+        promocao.setDesconto(10.0);
+        promocao.setDisponibilidade(true);
+        promocao.setDataInicio(LocalDate.of(2024, 7, 1));
+        promocao.setDataFim(LocalDate.of(2024, 7, 31));
 
         when(promocaoService.updatePromocao(anyLong(), any(Promocao.class))).thenReturn(promocao);
 

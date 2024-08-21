@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.models;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,10 +41,10 @@ public class Promocao {
     @NotBlank(message = "A categoria é obrigatória")
     private String categoria;
 
-    @NotBlank(message = "O desconto é obrigatório")
+    @NotNull(message = "O desconto é obrigatório")
     private double desconto;
 
-    @NotBlank(message = "A disponibilidade é obrigatório")
+    @NotNull(message = "A disponibilidade é obrigatório")
     private boolean disponibilidade;
     
     @NotNull(message = "A data de início é obrigatória")

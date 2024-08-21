@@ -13,7 +13,7 @@ import br.org.unicortes.barbearia.services.PromocaoService;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/promocoes/")
+@RequestMapping("/api/promocoes")
 public class PromocaoController {
 
     @Autowired
