@@ -7,17 +7,18 @@ import br.org.unicortes.barbearia.services.ClientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@AutoConfigureMockMvc
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ClientIntegrationTest {
 
     @Autowired
@@ -31,7 +32,12 @@ public class ClientIntegrationTest {
     @BeforeEach
     void setUp() {
         clientRepository.deleteAll(); // Limpa o banco de dados antes de cada teste
-        client = new Client(1L, "Gustavo", "81971015135", LocalDate.now(),"gustavo@email.com");
+        client = new Client();
+        client.setId(1L);
+        client.setName("John Doe");
+        client.setEmail("john.doe@example.com");
+        client.setBirthday(new java.util.Date());
+        client.setPhone("1234567890");
     }
 
     @Test
@@ -69,8 +75,14 @@ public class ClientIntegrationTest {
     @Test
     void testListAllClients() {
         Client client1 = clientService.createClient(client);
-        Client client2 = clientService.createClient(new Client(2L, "Matheus", "81971015135", LocalDate.now(),"gustavo@email.com"));
-        List<Client> clients = clientService.listAllClients();
+        Client client2 = new Client();
+        client2.setName("João Grilo");
+        client2.setEmail("cricri@gmail.com");
+        client2.setBirthday(new java.util.Date());
+        client2.setPhone("1234567890");
+        clientService.createClient(client2);
+
+        List<Client> clients = clientService.getAllClients();
 
         assertNotNull(clients);
         assertEquals(2, clients.size());
@@ -80,7 +92,7 @@ public class ClientIntegrationTest {
 
     @Test
     void testUpdateClientThrowsExceptionWhenNotFound() {
-        Client nonExistentClient = new Client(4L, "Matheus", "81971015135", LocalDate.now(),"gustavo@email.com");
+        Client nonExistentClient = new Client();
         nonExistentClient.setId(99L);
 
         assertThrows(ClientNotFoundException.class, () -> clientService.updateClient(nonExistentClient.getId(), nonExistentClient));
