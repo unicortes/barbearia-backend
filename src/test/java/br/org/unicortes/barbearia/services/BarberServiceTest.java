@@ -28,16 +28,8 @@ public class BarberServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        barber = new Barber();
+        barber = new Barber(null, "Gustavo", "gustavo@email.com", "1234567890", "12345678901", 1500.0, "Rua 1, Nº 10", LocalDate.now(), "09:00 - 18:00");
         barber.setId(1L);
-        barber.setName("João Silva");
-        barber.setEmail("joao@example.com");
-        barber.setPhone("1234567890");
-        barber.setCpf("12345678901");
-        barber.setSalary(1500.0);
-        barber.setAddress("Rua 1, Nº 10");
-        barber.setAdmissionDate(LocalDate.now());
-        barber.setOpeningHours("09:00 - 18:00");
     }
 
     // teste 1
