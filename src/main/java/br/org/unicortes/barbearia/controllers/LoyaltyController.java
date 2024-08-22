@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping(path = "/api/loyaltyCards")
+@RequestMapping("/api/loyaltyCards")
 public class LoyaltyController {
 
     @Autowired
