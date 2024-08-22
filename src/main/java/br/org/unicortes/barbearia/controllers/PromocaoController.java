@@ -19,7 +19,7 @@ public class PromocaoController {
     @Autowired
     private PromocaoService promocaoService;
 
-    @GetMapping("/index")
+    @GetMapping
 	public List<Promocao> getAllPromocao() {
         return promocaoService.getAllPromocao();
     }
@@ -32,13 +32,13 @@ public class PromocaoController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
-    @PostMapping("/criar")
+    @PostMapping
     public ResponseEntity<Promocao> criarPromocao(@RequestBody Promocao promocao) {
         Promocao novaPromocao = promocaoService.savePromocao(promocao);
         return new ResponseEntity<>(novaPromocao, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/editar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Promocao> editarPromocao(@PathVariable Long id, @RequestBody Promocao promocao) {
         try {
             Promocao promocaoAtualizada = promocaoService.updatePromocao(id, promocao);
