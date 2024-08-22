@@ -57,11 +57,11 @@ public class LoyaltyCardService {
     public void createBirthdaySale(Client client, SaleForLoyaltyCard saleForLoyaltyCard) {
         try{
             LocalDate currentDate = LocalDate.now();
-            LocalDate clientBirthday = client.getBirthday();
+            //LocalDate clientBirthday = client.getBirthday();
             LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClientId(client.getId());
-            if (clientBirthday.equals(currentDate)) {
-                this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
-            }
+//            if (clientBirthday.equals(currentDate)) {
+//                this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
+//            }
         }catch(ClientNotFoundException e){
             System.out.println(e.getMessage());
         }

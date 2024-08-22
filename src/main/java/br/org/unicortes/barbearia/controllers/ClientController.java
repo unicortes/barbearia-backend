@@ -8,16 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/clients")
 public class ClientController {
+
     @Autowired
     private ClientService clientService;
 
     @PostMapping
-    public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO){
+    public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) {
         Client client = convertToEntity(clientDTO);
         Client newClient = clientService.createClient(client);
         return ResponseEntity.ok(convertToDTO(newClient));
@@ -26,8 +28,8 @@ public class ClientController {
     @PutMapping("/{id}")
     public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
         Client client = convertToEntity(clientDTO);
-        Client clientAtualizado = clientService.updateClient(id, client);
-        return ResponseEntity.ok(convertToDTO(clientAtualizado));
+        Client updateClient = clientService.updateClient(id, client);
+        return ResponseEntity.ok(convertToDTO(updateClient));
     }
 
     @DeleteMapping("/{id}")
@@ -37,9 +39,17 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Client>> listClient() {
-        List<Client> clients = clientService.listAllClients();
+    public ResponseEntity<List<ClientDTO>> getAllClients() {
+        List<ClientDTO> clients = clientService.getAllClients().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(clients);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientDTO> getClientById(@PathVariable Long id) {
+        Client client = clientService.getClientById(id);
+        return ResponseEntity.ok(convertToDTO(client));
     }
 
     private ClientDTO convertToDTO(Client client) {

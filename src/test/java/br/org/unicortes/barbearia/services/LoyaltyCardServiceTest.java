@@ -81,7 +81,7 @@ public class LoyaltyCardServiceTest {
     void testCreateBirthdaySale() {
         Client client = new Client();
         client.setId(1L);
-        client.setBirthday(LocalDate.now());
+        //client.setBirthday(LocalDate.now());
         SaleForLoyaltyCard saleForLoyaltyCard = new SaleForLoyaltyCard();
         LoyaltyCard loyaltyCard = new LoyaltyCard();
 

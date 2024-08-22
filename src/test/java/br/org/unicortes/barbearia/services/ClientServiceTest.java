@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,19 +19,23 @@ import static org.mockito.Mockito.*;
 
 public class ClientServiceTest {
 
-    @InjectMocks
-    private ClientService clientService;
-
     @Mock
     private ClientRepository clientRepository;
+
+    @InjectMocks
+    private ClientService clientService;
 
     private Client client;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        client = new Client(null, "Gustavo", "81971015135", LocalDate.now(),"gustavo@email.com");
+        client = new Client();
         client.setId(1L);
+        client.setName("Joaquim");
+        client.setEmail("john.doe@example.com");
+        client.setBirthday(new java.util.Date());
+        client.setPhone("1234567890");
     }
 
     @Test
@@ -71,7 +75,7 @@ public class ClientServiceTest {
     @Test
     void testListAllClients() {
         when(clientRepository.findAll()).thenReturn(Arrays.asList(client));
-        List<Client> clients = clientService.listAllClients();
+        List<Client> clients = clientService.getAllClients();
 
         assertNotNull(clients);
         assertEquals(1, clients.size());
