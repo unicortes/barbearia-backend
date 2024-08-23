@@ -1,18 +1,16 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.exceptions.ClientNotFoundException;
-import br.org.unicortes.barbearia.exceptions.LoyaltyCardNotFoundException;
 import br.org.unicortes.barbearia.models.Client;
 import br.org.unicortes.barbearia.models.LoyaltyCard;
-import br.org.unicortes.barbearia.models.SaleForLoyaltyCard;
+import br.org.unicortes.barbearia.models.Servico;
+import br.org.unicortes.barbearia.repositories.ClientRepository;
 import br.org.unicortes.barbearia.repositories.LoyaltyCardRepository;
-import br.org.unicortes.barbearia.repositories.SaleForLoyaltyCardRepository;
-import jakarta.transaction.Transactional;
+import br.org.unicortes.barbearia.repositories.ServicoRepository;
+import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 
 @Service
 public class LoyaltyCardService {
@@ -21,56 +19,55 @@ public class LoyaltyCardService {
     private LoyaltyCardRepository loyaltyCardRepository;
 
     @Autowired
-    private SaleForLoyaltyCardRepository saleForLoyaltyCardRepository;
+    private ClientRepository clientRepository;
 
-    @Transactional
+    @Autowired
+    private ServicoRepository servicoRepository;
+
+    public List<LoyaltyCard> getAllLoyaltyCards() {
+        return loyaltyCardRepository.findAll();
+    }
+
+    public LoyaltyCard getLoyaltyCardById(Long id) {
+        return loyaltyCardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
     public LoyaltyCard createLoyaltyCard(LoyaltyCard loyaltyCard) {
-        return this.loyaltyCardRepository.save(loyaltyCard);
+        Client client = clientRepository.findById(loyaltyCard.getClient().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getClient().getId()));
+
+        Servico service = servicoRepository.findById(loyaltyCard.getService().getServicoId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getService().getServicoId()));
+
+        loyaltyCard.setClient(client);
+        loyaltyCard.setService(service);
+
+        return loyaltyCardRepository.save(loyaltyCard);
     }
 
-    @Transactional
-    public LoyaltyCard updateLoyaltyCard(LoyaltyCard loyaltyCard){
-        if (!loyaltyCardRepository.existsById(loyaltyCard.getId())){
-            return null;
-        }else{
-            return loyaltyCardRepository.save(loyaltyCard);
-        }
+    public LoyaltyCard updateLoyaltyCard(Long id, LoyaltyCard loyaltyCardDetails) {
+        LoyaltyCard existingLoyaltyCard = loyaltyCardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+
+        Client client = clientRepository.findById(loyaltyCardDetails.getClient().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getClient().getId()));
+
+        Servico service = servicoRepository.findById(loyaltyCardDetails.getService().getServicoId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getService().getServicoId()));
+
+        existingLoyaltyCard.setClient(client);
+        existingLoyaltyCard.setDateAdmission(loyaltyCardDetails.getDateAdmission());
+        existingLoyaltyCard.setService(service);
+        existingLoyaltyCard.setPoints(loyaltyCardDetails.getPoints());
+
+        return loyaltyCardRepository.save(existingLoyaltyCard);
     }
 
-    @Transactional
-    public LoyaltyCard getLoyaltyCard(Long id) {
-        return this.loyaltyCardRepository.findById(id)
-                .orElseThrow(() -> new LoyaltyCardNotFoundException(id));
-    }
+    public void deleteLoyaltyCard(Long id) {
+        LoyaltyCard loyaltyCard = loyaltyCardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
 
-    @Transactional
-    public void deleteLoyaltyCard(Long saleId){
-        this.loyaltyCardRepository.deleteById(saleId);
-    }
-
-    @Transactional
-    public SaleForLoyaltyCard createSaleForLoyaltyCard(SaleForLoyaltyCard saleForLoyaltyCard, LoyaltyCard loyaltyCard) {
-        return this.saleForLoyaltyCardRepository.save(saleForLoyaltyCard);
-    }
-
-    @Transactional
-    public void createBirthdaySale(Client client, SaleForLoyaltyCard saleForLoyaltyCard) {
-        try{
-            LocalDate currentDate = LocalDate.now();
-            //LocalDate clientBirthday = client.getBirthday();
-            LoyaltyCard loyaltyCard = this.loyaltyCardRepository.findByClientId(client.getId());
-//            if (clientBirthday.equals(currentDate)) {
-//                this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
-//            }
-        }catch(ClientNotFoundException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @Transactional
-    public void createLoyaltySale(LoyaltyCard loyaltyCard, SaleForLoyaltyCard saleForLoyaltyCard){
-        if (loyaltyCard.getServicesAquired().size() == 10){
-            this.createSaleForLoyaltyCard(saleForLoyaltyCard, loyaltyCard);
-        }
+        loyaltyCardRepository.delete(loyaltyCard);
     }
 }
