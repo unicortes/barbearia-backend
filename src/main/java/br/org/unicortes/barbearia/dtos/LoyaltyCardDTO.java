@@ -13,7 +13,7 @@ public class LoyaltyCardDTO {
 
     private Long id;
     private Long clientId;
-    private Date dataAdmission;
+    private Date dateAdmission;
     private Long serviceId;
     private int points;
 }

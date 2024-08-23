@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -20,16 +21,15 @@ public class LoyaltyCard {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Client clientId;
+    private Client client;
 
-    @Column(name = "date_admission", nullable = false)
-    @Temporal(TemporalType.DATE)
+    @NotNull(message = "O campo 'data de admissão' é obrigatório")
     private Date dateAdmission;
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private Servico service;
 
-    @Column(name = "points")
-    private int points;
+    @NotNull(message = "O campo 'pontos' é obrigatório")
+    private Integer points;
 }

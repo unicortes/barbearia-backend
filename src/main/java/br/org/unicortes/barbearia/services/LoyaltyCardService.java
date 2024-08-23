@@ -1,22 +1,18 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.dtos.LoyaltyCardDTO;
-import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import br.org.unicortes.barbearia.models.Client;
 import br.org.unicortes.barbearia.models.LoyaltyCard;
 import br.org.unicortes.barbearia.models.Servico;
 import br.org.unicortes.barbearia.repositories.ClientRepository;
 import br.org.unicortes.barbearia.repositories.LoyaltyCardRepository;
 import br.org.unicortes.barbearia.repositories.ServicoRepository;
+import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class LoyaltyCardService {
 
     @Autowired
@@ -28,70 +24,50 @@ public class LoyaltyCardService {
     @Autowired
     private ServicoRepository servicoRepository;
 
-    public List<LoyaltyCardDTO> findAll() {
-        return loyaltyCardRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<LoyaltyCard> getAllLoyaltyCards() {
+        return loyaltyCardRepository.findAll();
     }
 
-    public LoyaltyCardDTO findById(Long id) {
-        LoyaltyCard loyaltyCard = loyaltyCardRepository.findById(id)
+    public LoyaltyCard getLoyaltyCardById(Long id) {
+        return loyaltyCardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
-        return convertToDTO(loyaltyCard);
     }
 
-    public LoyaltyCardDTO create(LoyaltyCardDTO loyaltyCardDTO) {
-        Client client = clientRepository.findById(loyaltyCardDTO.getClientId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDTO.getClientId()));
+    public LoyaltyCard createLoyaltyCard(LoyaltyCard loyaltyCard) {
+        Client client = clientRepository.findById(loyaltyCard.getClient().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getClient().getId()));
 
-        Servico service = servicoRepository.findById(loyaltyCardDTO.getServiceId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDTO.getServiceId()));
+        Servico service = servicoRepository.findById(loyaltyCard.getService().getServicoId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getService().getServicoId()));
 
-        LoyaltyCard loyaltyCard = new LoyaltyCard();
-        loyaltyCard.setClientId(client);
-        loyaltyCard.setDateAdmission(loyaltyCardDTO.getDataAdmission());
+        loyaltyCard.setClient(client);
         loyaltyCard.setService(service);
-        loyaltyCard.setPoints(loyaltyCardDTO.getPoints());
 
-        LoyaltyCard savedLoyaltyCard = loyaltyCardRepository.save(loyaltyCard);
-        return convertToDTO(savedLoyaltyCard);
+        return loyaltyCardRepository.save(loyaltyCard);
     }
 
-    public LoyaltyCardDTO update(Long id, LoyaltyCardDTO loyaltyCardDTO) {
+    public LoyaltyCard updateLoyaltyCard(Long id, LoyaltyCard loyaltyCardDetails) {
         LoyaltyCard existingLoyaltyCard = loyaltyCardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
 
-        Client client = clientRepository.findById(loyaltyCardDTO.getClientId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDTO.getClientId()));
+        Client client = clientRepository.findById(loyaltyCardDetails.getClient().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getClient().getId()));
 
-        Servico service = servicoRepository.findById(loyaltyCardDTO.getServiceId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDTO.getServiceId()));
+        Servico service = servicoRepository.findById(loyaltyCardDetails.getService().getServicoId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getService().getServicoId()));
 
-        existingLoyaltyCard.setClientId(client);
-        existingLoyaltyCard.setDateAdmission(loyaltyCardDTO.getDataAdmission());
+        existingLoyaltyCard.setClient(client);
+        existingLoyaltyCard.setDateAdmission(loyaltyCardDetails.getDateAdmission());
         existingLoyaltyCard.setService(service);
-        existingLoyaltyCard.setPoints(loyaltyCardDTO.getPoints());
+        existingLoyaltyCard.setPoints(loyaltyCardDetails.getPoints());
 
-        LoyaltyCard updatedLoyaltyCard = loyaltyCardRepository.save(existingLoyaltyCard);
-        return convertToDTO(updatedLoyaltyCard);
+        return loyaltyCardRepository.save(existingLoyaltyCard);
     }
 
-    public void delete(Long id) {
+    public void deleteLoyaltyCard(Long id) {
         LoyaltyCard loyaltyCard = loyaltyCardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
 
         loyaltyCardRepository.delete(loyaltyCard);
     }
-
-    private LoyaltyCardDTO convertToDTO(LoyaltyCard loyaltyCard) {
-        return new LoyaltyCardDTO(
-                loyaltyCard.getId(),
-                loyaltyCard.getClientId().getId(),
-                loyaltyCard.getDateAdmission(),
-                loyaltyCard.getService().getServicoId(),
-                loyaltyCard.getPoints()
-        );
-    }
 }
-
