@@ -32,7 +32,6 @@ public class BarberServiceTest {
         barber.setId(1L);
     }
 
-    // teste 1
     @Test
     void testCreateBarber() {
         when(barberRepository.save(barber)).thenReturn(barber);
@@ -43,7 +42,6 @@ public class BarberServiceTest {
         verify(barberRepository, times(1)).save(barber);
     }
 
-    // teste 2
     @Test
     void testUpdateBarber() {
         Long id = 1L;
@@ -57,7 +55,6 @@ public class BarberServiceTest {
         verify(barberRepository, times(1)).save(barber);
     }
 
-    // teste 3
     @Test
     void testDeleteBarber() {
         Long id = 1L;
@@ -69,7 +66,6 @@ public class BarberServiceTest {
         verify(barberRepository, times(1)).delete(barber);
     }
 
-    // teste 4
     @Test
     void testListAllBarbers() {
         when(barberRepository.findAll()).thenReturn(Arrays.asList(barber));
@@ -80,7 +76,6 @@ public class BarberServiceTest {
         verify(barberRepository, times(1)).findAll();
     }
 
-    // teste 5 - terminar
     @Test
     void testUpdateBarberThrowsExceptionWhenNotFound() {
         Long id = 1L;
