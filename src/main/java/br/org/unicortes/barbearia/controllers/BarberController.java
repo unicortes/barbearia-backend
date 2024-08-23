@@ -13,12 +13,12 @@ import java.util.List;
 @CrossOrigin("*")
 @RequestMapping("/api/barber")
 public class BarberController {
+
     @Autowired
     private BarberService barberService;
 
     @PostMapping
     public ResponseEntity<BarberDTO> createBarber(@RequestBody BarberDTO barberDTO){
-
         Barber barber = convertToEntity(barberDTO);
         Barber novoBarber = barberService.createBarber(barber);
         return ResponseEntity.ok(convertToDTO(novoBarber));
@@ -43,6 +43,12 @@ public class BarberController {
         return ResponseEntity.ok(barbers);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<BarberDTO> getBarberById(@PathVariable Long id) {
+        Barber barber = barberService.getBarberById(id);
+        return ResponseEntity.ok(convertToDTO(barber));
+    }
+
     private BarberDTO convertToDTO(Barber barber) {
         BarberDTO barberDTO = new BarberDTO();
         barberDTO.setId(barber.getId());
@@ -59,8 +65,8 @@ public class BarberController {
 
     private Barber convertToEntity(BarberDTO barberDTO) {
         Barber barber = new Barber();
-        if(barberDTO.getId()!=null){
-        barber.setId(barberDTO.getId());
+        if (barberDTO.getId() != null) {
+            barber.setId(barberDTO.getId());
         }
         barber.setName(barberDTO.getName());
         barber.setEmail(barberDTO.getEmail());

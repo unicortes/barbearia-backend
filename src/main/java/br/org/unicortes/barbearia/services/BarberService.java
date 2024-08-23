@@ -43,4 +43,9 @@ public class BarberService {
     public List<Barber> listAllBarbers() {
         return barberRepository.findAll();
     }
+
+    public Barber getBarberById(Long id) {
+        return barberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id));
+    }
 }
