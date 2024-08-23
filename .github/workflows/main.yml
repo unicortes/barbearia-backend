@@ -30,5 +30,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Instalar Maven (opcional, se necessário)
+        run: sudo apt-get install -y maven
+
       - name: Construir e rodar testes
         run: mvn clean verify
+
+      - name: Exibir versão do Maven (opcional, para depuração)
+        run: mvn -version

@@ -1,7 +1,6 @@
 package br.org.unicortes.barbearia.controllers;
 
 import br.org.unicortes.barbearia.dtos.SaleDTO;
-import br.org.unicortes.barbearia.dtos.SaleForLoyaltyCardDTO;
 import br.org.unicortes.barbearia.models.Sale;
 import br.org.unicortes.barbearia.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;

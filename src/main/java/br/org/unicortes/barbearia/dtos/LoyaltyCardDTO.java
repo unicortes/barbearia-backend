@@ -1,19 +1,20 @@
 package br.org.unicortes.barbearia.dtos;
 
-import br.org.unicortes.barbearia.models.Client;
-import br.org.unicortes.barbearia.models.Servico;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoyaltyCardDTO {
-    private long id;
 
-    private Client client;
-
-    private Date admissionDate;
-
-    private List<Servico> servicesAquired;
+    private Long id;
+    private Long clientId;
+    private Date dateAdmission;
+    private Long serviceId;
+    private int points;
 }
+
