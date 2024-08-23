@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/loyaltyCards")
@@ -20,6 +22,10 @@ public class LoyaltyController {
     @Autowired
     private LoyaltyCardService loyaltyCardService;
 
+    @GetMapping
+    public List<LoyaltyCard> getAllCards() {
+        return loyaltyCardService.getAllCards();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<LoyaltyCardDTO> getSaleById(@PathVariable Long id) throws Exception {
@@ -29,6 +35,7 @@ public class LoyaltyController {
 
     @PostMapping(path = "/newLoyaltyCard")
     public ResponseEntity<LoyaltyCardDTO> createLoyaltyCard(@RequestBody LoyaltyCardDTO loyaltyCardDto) throws Exception {
+        System.out.println(loyaltyCardDto.getAdmissionDate());
         LoyaltyCard sale = convertToLoyaltyCard(loyaltyCardDto);
         LoyaltyCard createdLoyaltyCard = this.loyaltyCardService.createLoyaltyCard(sale);
         return ResponseEntity.ok(convertToDto(createdLoyaltyCard));

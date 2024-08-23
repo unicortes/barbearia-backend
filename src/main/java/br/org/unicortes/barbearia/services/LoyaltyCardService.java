@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class LoyaltyCardService {
@@ -22,6 +23,11 @@ public class LoyaltyCardService {
 
     @Autowired
     private SaleForLoyaltyCardRepository saleForLoyaltyCardRepository;
+
+    @Transactional
+    public List<LoyaltyCard> getAllCards(){
+        return loyaltyCardRepository.findAll();
+    }
 
     @Transactional
     public LoyaltyCard createLoyaltyCard(LoyaltyCard loyaltyCard) {
