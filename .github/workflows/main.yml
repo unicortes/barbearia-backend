@@ -38,3 +38,27 @@ jobs:
 
       - name: Exibir versão do Maven (opcional, para depuração)
         run: mvn -version
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - run: java src/test/java/br/org/unicortes/barbearia/services/BarberServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/ClientServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/LoyaltyCardServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/ProductServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/PromocaoServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/SaleServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/ServicoServiceTest
+      - run: java src/test/java/br/org/unicortes/barbearia/services/StockServiceTest
+
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/BarberIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/ClientIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/LoyaltyCardIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/ProductIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/PromocaoIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/SaleIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/ServicoIntegrationTest
+      - run: java src/test/java/br/org/unicortes/barbearia/controllers/StockIntegrationTest
