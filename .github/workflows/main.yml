@@ -36,5 +36,25 @@ jobs:
       - name: Construir e rodar testes
         run: mvn clean verify
 
+      - name: Rodar testes específicos
+        run: |
+            mvn -Dtest=br.org.unicortes.barbearia.services.BarberServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ClientServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.LoyaltyCardServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ProductServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.PromocaoServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.SaleServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ServicoServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.StockServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.BarberIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ClientIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.LoyaltyCardIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ProductIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.PromocaoIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.SaleIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ServicoIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.StockIntegrationTest test
+
+
       - name: Exibir versão do Maven (opcional, para depuração)
         run: mvn -version
