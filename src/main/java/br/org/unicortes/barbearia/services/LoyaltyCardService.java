@@ -9,7 +9,6 @@ import br.org.unicortes.barbearia.repositories.ServicoRepository;
 import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
