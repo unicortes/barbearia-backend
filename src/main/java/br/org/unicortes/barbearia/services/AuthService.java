@@ -44,8 +44,15 @@ public class AuthService implements UserDetailsService {
     }
 
     public Usuario createUser(Usuario user) {
+        if (usuarioRepository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("Usuário já existe");//Criar exceção especifica
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.usuarioRepository.save(user);
+    }
+
+    public Usuario getUsuarioByEmail(String email) {
+        return this.usuarioRepository.findByEmail(email);
     }
 
 
