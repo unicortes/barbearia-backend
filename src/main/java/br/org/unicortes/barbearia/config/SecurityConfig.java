@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -26,41 +29,53 @@ public class SecurityConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+    @Autowired
+    private LogoutSuccessHandler customLogoutSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/home").permitAll()
-                        .requestMatchers("/admin/**", "/register/**").hasRole("ADMIN")
-                        .requestMatchers("/barbeiro/**").hasRole("BARBER")
-                        .requestMatchers("/cliente/**").hasRole("CLIENT")
+                        .requestMatchers("/barbeariaUnicortes/register").permitAll()
+                        .requestMatchers("/barbeariaUnicortes/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/barbeariaUnicortes/barbeiro/**").hasRole("BARBER")
+                        .requestMatchers("/barbeariaUnicortes/cliente/**").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/api/promocoes", true)// Especifique sua própria página de login se desejar
+                .formLogin(form -> form//
+                        .loginProcessingUrl("/barbeariaUnicortes/login")
+                        .successHandler(customAuthenticationSuccessHandler)  // Use o handler customizado
                         .permitAll()
                 )
 
                 .logout(logout -> logout
+                        .logoutUrl("/barbeariaUnicortes/logout") // URL para o logout
+                        .logoutSuccessHandler(customLogoutSuccessHandler) // URL para redirecionar após logout bem-sucedido
+                        .invalidateHttpSession(true) // Invalida a sessão HTTP
+                        .deleteCookies("JSESSIONID") // Exclui os cookies de sessão
                         .permitAll()
                 );
 
         return http.build();
     }
 
-    /*@Bean
-    public UserDetailsService clientDetailsService() {
+    @Bean
+    public UserDetailsService userDetailsService() {
 
-        UserDetails admin = User.builder()
+        /*UserDetails admin = User.builder()
                 .username("admin")
-                .password("$2a$12$RW1lyC0rdNaLDaT13dtJIezP8XStjZFGivxZpW47hGKOJyvNz3j.G")
+                .password("$2a$12$AvcVZi9.Ak.Li7iqu9/d7OdnyLouk6wO2tK4e1nB0x5stcmW9foZK")
                 .roles("ADMIN", "CLIENT", "BARBER")
                 .build();
 
-        System.out.println(admin);
+        System.out.println(admin);*/
 
-        return new InMemoryUserDetailsManager(admin);
-    }*/
+        return authService;
+    }
 
 
     @Bean
