@@ -60,7 +60,7 @@ public class LoyaltyCardController {
         loyaltyCardDTO.setId(loyaltyCard.getId());
         loyaltyCardDTO.setClientId(loyaltyCard.getClient().getId());
         loyaltyCardDTO.setDateAdmission(loyaltyCard.getDateAdmission());
-        loyaltyCardDTO.setServiceId(loyaltyCard.getService().getServicoId());
+        loyaltyCardDTO.setServiceId(loyaltyCard.getService().getId());
         loyaltyCardDTO.setPoints(loyaltyCard.getPoints());
         return loyaltyCardDTO;
     }
@@ -75,7 +75,7 @@ public class LoyaltyCardController {
         loyaltyCard.setClient(client);
 
         Servico service = new Servico();
-        service.setServicoId(loyaltyCardDTO.getServiceId());
+        service.setId(loyaltyCardDTO.getServiceId());
         loyaltyCard.setService(service);
 
         loyaltyCard.setDateAdmission(loyaltyCardDTO.getDateAdmission());

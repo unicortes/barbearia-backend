@@ -37,8 +37,8 @@ public class LoyaltyCardService {
         Client client = clientRepository.findById(loyaltyCard.getClient().getId())
                 .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getClient().getId()));
 
-        Servico service = servicoRepository.findById(loyaltyCard.getService().getServicoId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getService().getServicoId()));
+        Servico service = servicoRepository.findById(loyaltyCard.getService().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCard.getService().getId()));
 
         loyaltyCard.setClient(client);
         loyaltyCard.setService(service);
@@ -53,8 +53,8 @@ public class LoyaltyCardService {
         Client client = clientRepository.findById(loyaltyCardDetails.getClient().getId())
                 .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getClient().getId()));
 
-        Servico service = servicoRepository.findById(loyaltyCardDetails.getService().getServicoId())
-                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getService().getServicoId()));
+        Servico service = servicoRepository.findById(loyaltyCardDetails.getService().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(loyaltyCardDetails.getService().getId()));
 
         existingLoyaltyCard.setClient(client);
         existingLoyaltyCard.setDateAdmission(loyaltyCardDetails.getDateAdmission());

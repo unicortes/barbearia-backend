@@ -102,7 +102,7 @@ public class ServicoController {
     }
     private ServicoDTO servicoGetTo(Servico servico){
         ServicoDTO servicoDTO=new ServicoDTO();
-        servicoDTO.setId(servico.getServicoId());
+        servicoDTO.setId(servico.getId());
         servicoDTO.setName(servico.getName());
         servicoDTO.setDescription(servico.getDescription());
         servicoDTO.setPrice(servico.getPrice());
@@ -110,10 +110,10 @@ public class ServicoController {
     }
 
     private Servico getEntity(ServicoDTO servicoDTO){
-        Servico servicoNew=new Servico();
+        Servico servicoNew = new Servico();
 
         if(servicoDTO.getId()!=null){
-            servicoNew.setServicoId(servicoDTO.getId());
+            servicoNew.setId(servicoDTO.getId());
         }
         servicoNew.setName(servicoDTO.getName());
         servicoNew.setDescription(servicoDTO.getDescription());

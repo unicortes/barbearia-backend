@@ -60,7 +60,7 @@ public class LoyaltyCardIntegrationTest {
         client.setId(1L);
 
         Servico service = new Servico();
-        service.setServicoId(1L);
+        service.setId(1L);
 
         loyaltyCard = new LoyaltyCard();
         loyaltyCard.setId(1L);

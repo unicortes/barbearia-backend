@@ -54,7 +54,7 @@ public class LoyaltyCardServiceTest {
 
         // Configura o serviço de teste
         service = new Servico();
-        service.setServicoId(1L);
+        service.setId(1L);
 
         // Configura o cartão de fidelidade de teste
         loyaltyCard = new LoyaltyCard();
@@ -69,7 +69,7 @@ public class LoyaltyCardServiceTest {
     void testCreateLoyaltyCard() {
         // Configura o comportamento esperado dos mocks
         when(clientRepository.findById(client.getId())).thenReturn(Optional.of(client));
-        when(servicoRepository.findById(service.getServicoId())).thenReturn(Optional.of(service));
+        when(servicoRepository.findById(service.getId())).thenReturn(Optional.of(service));
         when(loyaltyCardRepository.save(loyaltyCard)).thenReturn(loyaltyCard);
 
         // Chama o meodo a ser testado
@@ -78,11 +78,11 @@ public class LoyaltyCardServiceTest {
         // Verifica se o cartão de fidelidade foi criado corretamente
         assertNotNull(createdLoyaltyCard);
         assertEquals(loyaltyCard.getClient().getId(), createdLoyaltyCard.getClient().getId());
-        assertEquals(loyaltyCard.getService().getServicoId(), createdLoyaltyCard.getService().getServicoId());
+        assertEquals(loyaltyCard.getService().getId(), createdLoyaltyCard.getService().getId());
 
         // Verifica se os métodos dos mocks foram chamados com a quantidade esperada
         verify(clientRepository, times(1)).findById(client.getId());
-        verify(servicoRepository, times(1)).findById(service.getServicoId());
+        verify(servicoRepository, times(1)).findById(service.getId());
         verify(loyaltyCardRepository, times(1)).save(loyaltyCard);
     }
 
@@ -92,7 +92,7 @@ public class LoyaltyCardServiceTest {
         // Configura o comportamento esperado dos mocks
         when(loyaltyCardRepository.findById(id)).thenReturn(Optional.of(loyaltyCard));
         when(clientRepository.findById(client.getId())).thenReturn(Optional.of(client));
-        when(servicoRepository.findById(service.getServicoId())).thenReturn(Optional.of(service));
+        when(servicoRepository.findById(service.getId())).thenReturn(Optional.of(service));
         when(loyaltyCardRepository.save(loyaltyCard)).thenReturn(loyaltyCard);
 
         // Chama o metodo a ser testado
@@ -105,7 +105,7 @@ public class LoyaltyCardServiceTest {
         // Verifica se os métodos dos mocks foram chamados com a quantidade esperada
         verify(loyaltyCardRepository, times(1)).findById(id);
         verify(clientRepository, times(1)).findById(client.getId());
-        verify(servicoRepository, times(1)).findById(service.getServicoId());
+        verify(servicoRepository, times(1)).findById(service.getId());
         verify(loyaltyCardRepository, times(1)).save(loyaltyCard);
     }
 
