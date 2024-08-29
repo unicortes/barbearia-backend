@@ -13,6 +13,6 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
 
     Optional<Servico>findByName(String name);
 
-    Servico findByServicoId(Long id);
+    Optional<Servico> findById(Long id);
 
 }
