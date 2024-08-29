@@ -32,7 +32,7 @@ public class ServicoServiceTest {
         MockitoAnnotations.openMocks(this);
 
         servico=new Servico();
-        servico.setServicoId(3L);
+        servico.setId(3L);
         servico.setName("Sobrancelha");
         servico.setDescription("serviço de fazer sobrancelha");
         servico.setPrice(10.0);
@@ -46,13 +46,13 @@ public class ServicoServiceTest {
         Servico servicoSalvo=servicoService.createServico(servico);
         assertNotNull(servicoSalvo);
         assertEquals("Sobrancelha",servicoSalvo.getName());
-        assertEquals(3L,servicoSalvo.getServicoId());
+        assertEquals(3L,servicoSalvo.getId());
     }
 
     @Test
     void testUpdateServico() throws Exception {
         Servico servico = new Servico();
-        servico.setServicoId(4L);
+        servico.setId(4L);
         servico.setName("Sobrancelha");
         servico.setDescription("sobrancelha masculina");
         servico.setPrice(10.0);
@@ -65,14 +65,14 @@ public class ServicoServiceTest {
         when(servicoRepository.findById(4L)).thenReturn(Optional.of(servico));
         when(servicoRepository.save(servico)).thenReturn(servico);
 
-        Long id = servico.getServicoId();
+        Long id = servico.getId();
 
 
         Servico servicoAtual = servicoService.updateServico(id, servicoAtualizado);
 
         assertNotNull(servicoAtual);
         assertEquals("Corte de cabelo", servicoAtual.getName());
-        assertEquals(4L, servicoAtual.getServicoId());
+        assertEquals(4L, servicoAtual.getId());
         assertEquals(15.0, servicoAtual.getPrice());
 
     }
@@ -83,13 +83,13 @@ public class ServicoServiceTest {
 
         Servico findId=servicoService.getServico(3L);
         assertNotNull(findId);
-        assertEquals(3L, findId.getServicoId());
+        assertEquals(3L, findId.getId());
     }
 
     @Test
     void testGetAll() throws Exception {
         Servico servico2 = new Servico();
-        servico2.setServicoId(4L);
+        servico2.setId(4L);
         servico2.setName("Sobrancelha");
         servico2.setDescription("sobrancelha masculina");
         servico2.setPrice(10.0);

@@ -16,7 +16,7 @@ public class Servico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long servicoId;
+    private Long id;
 
     @NotBlank(message = "O campo 'nome' é obrigatório")
     @Size(min = 3, max = 50, message = "O nome deve ter entre 3 e 50 caracteres")
