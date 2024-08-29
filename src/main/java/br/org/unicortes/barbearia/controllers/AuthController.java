@@ -2,6 +2,7 @@ package br.org.unicortes.barbearia.controllers;
 
 import br.org.unicortes.barbearia.models.Usuario;
 import br.org.unicortes.barbearia.services.AuthService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +42,15 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
-    public String loginUser(@RequestBody Usuario usuario) {
+  @PostMapping("/login")
+    public ResponseEntity<Usuario> loginUser(@RequestBody Usuario usuario) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getPassword());
 
         Authentication authentication = this.authenticationManager.authenticate(token);
         UserDetails userDetails = this.authService.loadUserByUsername(usuario.getEmail());
         Usuario user = this.authService.getUsuarioByEmail(userDetails.getUsername());
-        return this.authService.gerarToken(user);
+        user.setToken(this.authService.gerarToken(user));
+        return ResponseEntity.ok(user);
     }
 
 

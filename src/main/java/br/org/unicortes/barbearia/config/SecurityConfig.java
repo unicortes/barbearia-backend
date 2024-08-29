@@ -19,6 +19,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 @Configuration
@@ -47,8 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/barbeariaUnicortes/barbeiro/**").hasRole("BARBER")
                         .requestMatchers("/barbeariaUnicortes/cliente/**").hasRole("CLIENT")
                         .anyRequest().authenticated()
-
                 )
+                .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form//
                         .loginProcessingUrl("/barbeariaUnicortes/login")
                         .successHandler(customAuthenticationSuccessHandler)  // Use o handler customizado
