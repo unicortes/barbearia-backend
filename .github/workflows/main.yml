@@ -46,7 +46,8 @@ jobs:
             mvn -Dtest=br.org.unicortes.barbearia.services.SaleServiceTest test
             mvn -Dtest=br.org.unicortes.barbearia.services.ServicoServiceTest test
             mvn -Dtest=br.org.unicortes.barbearia.services.StockServiceTest test
-            mvn -Dtest=br.org.unicortes.barbearia.services.ServiceAppointmentServiceTest test          
+            mvn -Dtest=br.org.unicortes.barbearia.services.ServiceAppointmentServiceTest test 
+            mvn -Dtest=br.org.unicortes.barbearia.services.AvailableTimeServiceTest test                    
             mvn -Dtest=br.org.unicortes.barbearia.controllers.BarberIntegrationTest test
             mvn -Dtest=br.org.unicortes.barbearia.controllers.ClientIntegrationTest test
             mvn -Dtest=br.org.unicortes.barbearia.controllers.LoyaltyCardIntegrationTest test
@@ -56,7 +57,7 @@ jobs:
             mvn -Dtest=br.org.unicortes.barbearia.controllers.ServicoIntegrationTest test
             mvn -Dtest=br.org.unicortes.barbearia.controllers.StockIntegrationTest test
             mvn -Dtest=br.org.unicortes.barbearia.controllers.ServiceAppointmentIntegrationTest test
-
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.AvailableTimeIntegrationTest test
 
       - name: Exibir versão do Maven (opcional, para depuração)
         run: mvn -version

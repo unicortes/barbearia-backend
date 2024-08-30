@@ -68,8 +68,7 @@ public class LoyaltyCardController {
     private LoyaltyCard convertToEntity(LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setId(loyaltyCardDTO.getId());
-        // Assume que os IDs são usados para recuperar Client e Servico se necessário
-        // É importante garantir que Client e Servico existam antes de atribuir, ou use IDs diretamente
+
         Client client = new Client();
         client.setId(loyaltyCardDTO.getClientId());
         loyaltyCard.setClient(client);
