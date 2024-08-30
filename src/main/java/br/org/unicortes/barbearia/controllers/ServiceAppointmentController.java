@@ -113,4 +113,24 @@ public class ServiceAppointmentController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(availableAppointmentDTOs);
     }
+
+    @GetMapping("/barber/{barberId}/daily-schedule")
+    public ResponseEntity<List<ServiceAppointmentDTO>> getDailySchedule(
+            @PathVariable Long barberId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date) {
+        List<ServiceAppointment> appointments = serviceAppointmentService.findAppointmentsByBarberAndDate(barberId, date);
+        List<ServiceAppointmentDTO> appointmentDTOs = appointments.stream()
+                .map(serviceAppointmentService::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(appointmentDTOs);
+    }
+
+    @GetMapping("/barber/timeRange/{barberId}")
+    public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(
+            @PathVariable Long barberId,
+            @RequestParam LocalDateTime startDateTime,
+            @RequestParam LocalDateTime endDateTime) {
+        return serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
+    }
+
 }

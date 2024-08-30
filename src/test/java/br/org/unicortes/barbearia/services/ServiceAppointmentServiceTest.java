@@ -114,6 +114,31 @@ public class ServiceAppointmentServiceTest {
     }
 
     @Test
+    public void testFindDailyAppointmentsForBarber() {
+        Long barberId = 1L;
+        LocalDateTime startOfDay = LocalDateTime.of(2024, 8, 30, 0, 0);
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+
+        ServiceAppointment appointment1 = new ServiceAppointment();
+        appointment1.setBarber(new Barber());
+        appointment1.setAppointmentDateTime(startOfDay.plusHours(2));
+
+        ServiceAppointment appointment2 = new ServiceAppointment();
+        appointment2.setBarber(new Barber());
+        appointment2.setAppointmentDateTime(startOfDay.plusHours(5));
+
+        when(serviceAppointmentRepository.findByBarberIdAndAppointmentDateTimeBetween(barberId, startOfDay, endOfDay))
+                .thenReturn(List.of(appointment1, appointment2));
+
+        List<ServiceAppointment> result = serviceAppointmentService.findAppointmentsByBarberAndDate(barberId, startOfDay);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(serviceAppointmentRepository, times(1))
+                .findByBarberIdAndAppointmentDateTimeBetween(barberId, startOfDay, endOfDay);
+    }
+
+    @Test
     public void testFindAvailableAppointments() {
         ServiceAppointment appointment1 = new ServiceAppointment();
         appointment1.setAvailable(true);

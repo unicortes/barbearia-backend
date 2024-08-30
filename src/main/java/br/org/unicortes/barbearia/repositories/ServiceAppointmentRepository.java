@@ -20,4 +20,6 @@ public interface ServiceAppointmentRepository extends JpaRepository<ServiceAppoi
     List<ServiceAppointment> findByAppointmentDateTimeBetweenAndAvailableIsTrue(LocalDateTime start, LocalDateTime end);
 
     List<ServiceAppointment> findByServiceIdAndAvailableIsTrue(Long serviceId);
+
+    List<ServiceAppointment> findByBarberIdAndAppointmentDateTimeBetween(Long barberId, LocalDateTime start, LocalDateTime end);
 }
