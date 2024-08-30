@@ -16,6 +16,7 @@ public class ServiceAppointmentDTO {
     private Long id;
     private Long serviceId;
     private Long barberId;
+    private Long availableTime;
     private String clientName;
     private LocalDateTime appointmentDateTime;
     private ServiceAppointmentStatus status;
