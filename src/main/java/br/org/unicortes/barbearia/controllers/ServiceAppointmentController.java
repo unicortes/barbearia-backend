@@ -114,7 +114,7 @@ public class ServiceAppointmentController {
         return ResponseEntity.ok(appointmentDTOs);
     }
 
-    @GetMapping("/barber/{barberId}")
+    @GetMapping("/barber/timeRange/{barberId}")
     public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(
             @PathVariable Long barberId,
             @RequestParam LocalDateTime startDateTime,
