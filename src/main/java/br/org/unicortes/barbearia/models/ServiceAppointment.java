@@ -27,6 +27,10 @@ public class ServiceAppointment {
     @JoinColumn(name = "barber_id", nullable = false)
     private Barber barber;
 
+    @OneToOne
+    @JoinColumn(name = "available_time_id", nullable = false)
+    private AvailableTime availableTime;
+
     @Column(name = "client_name", nullable = false)
     private String clientName;
 
@@ -39,8 +43,4 @@ public class ServiceAppointment {
 
     @Column(name = "available", nullable = false)
     private boolean available;
-
-    public boolean isEditable() {
-        return this.status == ServiceAppointmentStatus.PENDENTE;
-    }
 }

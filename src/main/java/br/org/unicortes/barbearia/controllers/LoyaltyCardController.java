@@ -24,8 +24,8 @@ public class LoyaltyCardController {
     @Autowired
     private LoyaltyCardService loyaltyCardService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin")
+    @GetMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<LoyaltyCardDTO>> getAllLoyaltyCards() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(auth.getAuthorities());
@@ -36,12 +36,14 @@ public class LoyaltyCardController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> getLoyaltyCardById(@PathVariable Long id) {
         LoyaltyCard loyaltyCard = loyaltyCardService.getLoyaltyCardById(id);
         return ResponseEntity.ok(convertToDTO(loyaltyCard));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> createLoyaltyCard(@RequestBody LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = convertToEntity(loyaltyCardDTO);
         LoyaltyCard newLoyaltyCard = loyaltyCardService.createLoyaltyCard(loyaltyCard);
@@ -49,6 +51,7 @@ public class LoyaltyCardController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> updateLoyaltyCard(@PathVariable Long id, @RequestBody LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = convertToEntity(loyaltyCardDTO);
         LoyaltyCard updatedLoyaltyCard = loyaltyCardService.updateLoyaltyCard(id, loyaltyCard);
@@ -56,6 +59,7 @@ public class LoyaltyCardController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> deleteLoyaltyCard(@PathVariable Long id) {
         loyaltyCardService.deleteLoyaltyCard(id);
         return ResponseEntity.noContent().build();
@@ -74,8 +78,7 @@ public class LoyaltyCardController {
     private LoyaltyCard convertToEntity(LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = new LoyaltyCard();
         loyaltyCard.setId(loyaltyCardDTO.getId());
-        // Assume que os IDs são usados para recuperar Client e Servico se necessário
-        // É importante garantir que Client e Servico existam antes de atribuir, ou use IDs diretamente
+
         Client client = new Client();
         client.setId(loyaltyCardDTO.getClientId());
         loyaltyCard.setClient(client);

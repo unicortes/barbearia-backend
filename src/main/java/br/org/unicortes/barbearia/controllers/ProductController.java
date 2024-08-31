@@ -5,6 +5,7 @@ import br.org.unicortes.barbearia.models.Product;
 import br.org.unicortes.barbearia.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> products = productService.getAllProducts().stream()
                 .map(this::convertToDTO)
@@ -27,12 +29,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(convertToDTO(product));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
         Product savedProduct = productService.createProduct(product);
@@ -40,6 +44,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
         Product updatedProduct = productService.updateProduct(id, product);
@@ -47,6 +52,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
