@@ -44,6 +44,14 @@ public class Usuario implements UserDetails{
 
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
+    }
+
+    public boolean isAdmin() {
+        if(this.role.equals("ADMIN")){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

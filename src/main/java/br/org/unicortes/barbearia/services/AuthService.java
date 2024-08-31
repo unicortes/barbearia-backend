@@ -10,8 +10,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,7 +56,7 @@ public class AuthService implements UserDetailsService {
 
     private String[] getRoles(Usuario user) {
         if (user.getRole() == null){
-            return new String[]{"CLIENT"};
+            return new String[]{"ROLE_CLIENT"};
         }
 
         return user.getRole().split(",");
@@ -123,5 +125,10 @@ public class AuthService implements UserDetailsService {
             }
         }
         return Collections.emptyList();
+    }
+
+    public Usuario getPrincipal() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return this.getUsuarioByEmail(auth.getName());
     }
 }

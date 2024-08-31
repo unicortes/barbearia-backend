@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -42,29 +43,30 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/barbeariaUnicortes/register").permitAll()
-                        .requestMatchers("/barbeariaUnicortes/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/barbeariaUnicortes/barbeiro/**").hasRole("BARBER")
-                        .requestMatchers("/barbeariaUnicortes/cliente/**").hasRole("CLIENT")
+                        .requestMatchers("/barbeariaUnicortes/register").hasRole("ADMIN")
+                        .requestMatchers("/admin/*").hasRole("ADMIN")
+                        .requestMatchers("/barbeiro/*").hasRole("BARBER")
+                        .requestMatchers("/cliente/*").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form//
+                .formLogin(form -> form
                         .loginProcessingUrl("/barbeariaUnicortes/login")
-                        .successHandler(customAuthenticationSuccessHandler)  // Use o handler customizado
+                        .successHandler(customAuthenticationSuccessHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/barbeariaUnicortes/logout") // URL para o logout
-                        .logoutSuccessHandler(customLogoutSuccessHandler) // URL para redirecionar após logout bem-sucedido
-                        .invalidateHttpSession(true) // Invalida a sessão HTTP
-                        .deleteCookies("JSESSIONID") // Exclui os cookies de sessão
+                        .logoutUrl("/barbeariaUnicortes/logout")
+                        .logoutSuccessHandler(customLogoutSuccessHandler)
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 
         return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
