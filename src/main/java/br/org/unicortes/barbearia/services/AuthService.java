@@ -46,7 +46,7 @@ public class AuthService implements UserDetailsService {
             return User.builder()
                     .username(user.getEmail())
                     .password(user.getPassword())
-                    .roles(user.getRole())
+                    .roles(getRoles(user))
                     .build();
         } else {
             throw new UsernameNotFoundException("Usuário não encontrado com o email: " + username);
@@ -56,7 +56,7 @@ public class AuthService implements UserDetailsService {
 
     private String[] getRoles(Usuario user) {
         if (user.getRole() == null){
-            return new String[]{"ROLE_CLIENT"};
+            return new String[]{"CLIENT"};
         }
 
         return user.getRole().split(",");
@@ -77,7 +77,7 @@ public class AuthService implements UserDetailsService {
    public String gerarToken(Usuario usuario){
         return JWT.create()
                 .withSubject(usuario.getEmail())
-                .withClaim("roles", List.of(usuario.getRole()))
+                .withClaim("roles", List.of(getRoles(usuario)))
                 .withExpiresAt(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00")))
                 .sign(Algorithm.HMAC256("secreta"));
     }
@@ -120,7 +120,7 @@ public class AuthService implements UserDetailsService {
                     return Collections.emptyList();
                 }
                 return roles.stream()
-                        .map(role -> new SimpleGrantedAuthority(role))
+                        .map(role -> new SimpleGrantedAuthority("ROLE_"+role))
                         .collect(Collectors.toList());
             }
         }

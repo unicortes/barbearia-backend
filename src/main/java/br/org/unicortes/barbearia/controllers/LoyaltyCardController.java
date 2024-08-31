@@ -24,7 +24,7 @@ public class LoyaltyCardController {
     @Autowired
     private LoyaltyCardService loyaltyCardService;
 
-    @GetMapping
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<LoyaltyCardDTO>> getAllLoyaltyCards() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

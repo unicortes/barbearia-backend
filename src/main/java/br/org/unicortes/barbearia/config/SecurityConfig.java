@@ -45,10 +45,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/barbeariaUnicortes/register").hasRole("ADMIN")
-                        .requestMatchers("/admin/*").hasRole("ADMIN")
-                        .requestMatchers("/barbeiro/*").hasRole("BARBER")
-                        .requestMatchers("/cliente/*").hasRole("CLIENT")
+                        .requestMatchers("/register").hasRole("ADMIN")
+                        .requestMatchers("*/admin/*").hasRole("ADMIN")
+                        .requestMatchers("*/barbeiro/*").hasRole("BARBER")
+                        .requestMatchers("*/cliente/*").hasRole("CLIENT")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
