@@ -5,6 +5,7 @@ import br.org.unicortes.barbearia.models.Sale;
 import br.org.unicortes.barbearia.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +20,14 @@ public class SaleController {
     private SaleService saleService;
 
     @GetMapping(path = "/sale/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<SaleDTO> getSaleById(@PathVariable Long id) throws Exception {
         Sale sale = this.saleService.getSaleById(id);
         return ResponseEntity.ok(convertToDto(sale));
     }
 
     @PostMapping(path = "/newSale")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<SaleDTO> createSale(@RequestBody SaleDTO saleDto) throws Exception {
         Sale sale = convertToSale(saleDto);
         Sale createdSale = this.saleService.createSale(sale);
@@ -32,6 +35,7 @@ public class SaleController {
     }
 
     @PutMapping(path = "/sale/edit/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<SaleDTO> updateSale(@PathVariable Long id, @RequestBody SaleDTO saleDto) throws Exception {
         Sale sale = convertToSale(saleDto);
         sale.setSaleId(id); // Ensure the correct ID is set for the update
@@ -40,14 +44,14 @@ public class SaleController {
     }
 
     @DeleteMapping(path = "/sale/delete/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> deleteSale(@PathVariable Long id) {
         this.saleService.deleteSale(id);
         return ResponseEntity.noContent().build();
     }
 
-
-
     @GetMapping(path = "/")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<SaleDTO>> findAllSales() {
         List<SaleDTO> allSales = this.saleService.getAllSales().stream()
                 .map(this::convertToDto)

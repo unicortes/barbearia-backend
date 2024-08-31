@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('BARBER, CLIENT, ADMIN')")
     public ResponseEntity<List<ServiceAppointmentDTO>> getAllAppointments() {
         List<ServiceAppointmentDTO> appointmentDTOs = serviceAppointmentService.findAll().stream()
                 .map(serviceAppointmentService::convertToDTO)
@@ -35,6 +37,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<ServiceAppointmentDTO> getAppointmentById(@PathVariable Long id) {
         Optional<ServiceAppointment> appointmentOpt = serviceAppointmentService.findById(id);
         return appointmentOpt
@@ -43,18 +46,21 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/{barberId}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByBarberId(@PathVariable Long barberId) {
         List<ServiceAppointment> appointments = serviceAppointmentService.findByBarberId(barberId);
         return ResponseEntity.ok(appointments);
     }
 
     @GetMapping("/status/{status}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByStatus(@PathVariable ServiceAppointmentStatus status) {
         List<ServiceAppointment> appointments = serviceAppointmentService.findByStatus(status);
         return ResponseEntity.ok(appointments);
     }
 
     @GetMapping("/after/{dateTime}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByAppointmentDateTimeAfter(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
         List<ServiceAppointment> appointments = serviceAppointmentService.findByAppointmentDateTimeAfter(dateTime);
@@ -62,6 +68,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/between")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByAppointmentDateTimeBetween(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
@@ -70,12 +77,14 @@ public class ServiceAppointmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<ServiceAppointmentDTO> createAppointment(@RequestBody ServiceAppointmentDTO dto) {
         ServiceAppointment savedAppointment = serviceAppointmentService.save(serviceAppointmentService.convertToEntity(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceAppointmentService.convertToDTO(savedAppointment));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         if (serviceAppointmentService.existsById(id)) {
             serviceAppointmentService.deleteById(id);
@@ -86,6 +95,7 @@ public class ServiceAppointmentController {
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<ServiceAppointmentDTO> updateAppointmentStatus(@PathVariable Long id, @RequestParam ServiceAppointmentStatus status) {
         try {
             ServiceAppointment updatedAppointment = serviceAppointmentService.updateAppointmentStatus(id, status);
@@ -96,10 +106,32 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/available")
+    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<List<ServiceAppointmentDTO>> getAvailableAppointments(@RequestParam Long serviceId) {
         List<ServiceAppointmentDTO> availableAppointmentDTOs = serviceAppointmentService.findAvailableAppointments(serviceId).stream()
                 .map(serviceAppointmentService::convertToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(availableAppointmentDTOs);
+    }
+
+    @GetMapping("/barber/{barberId}/daily-schedule")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    public ResponseEntity<List<ServiceAppointmentDTO>> getDailySchedule(
+            @PathVariable Long barberId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date) {
+        List<ServiceAppointment> appointments = serviceAppointmentService.findAppointmentsByBarberAndDate(barberId, date);
+        List<ServiceAppointmentDTO> appointmentDTOs = appointments.stream()
+                .map(serviceAppointmentService::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(appointmentDTOs);
+    }
+
+    @GetMapping("/barber/timeRange/{barberId}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(
+            @PathVariable Long barberId,
+            @RequestParam LocalDateTime startDateTime,
+            @RequestParam LocalDateTime endDateTime) {
+        return serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
     }
 }

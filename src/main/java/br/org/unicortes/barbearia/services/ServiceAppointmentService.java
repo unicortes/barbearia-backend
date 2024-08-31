@@ -94,6 +94,15 @@ public class ServiceAppointmentService {
         return serviceAppointmentRepository.save(appointment);
     }
 
+    public List<ServiceAppointment> findAppointmentsByBarberAndDate(Long barberId, LocalDateTime date) {
+        LocalDateTime startOfDay = date.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = date.toLocalDate().atTime(23, 59, 59);
+        return serviceAppointmentRepository.findByBarberIdAndAppointmentDateTimeBetween(barberId, startOfDay, endOfDay);
+    }
+
+    public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(Long barberId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return serviceAppointmentRepository.findByBarberIdAndAppointmentDateTimeBetween(barberId, startDateTime, endDateTime);
+    }
 
     public List<ServiceAppointment> findAvailableAppointments(Long serviceId) {
         return serviceAppointmentRepository.findByServiceIdAndAvailableIsTrue(serviceId);
