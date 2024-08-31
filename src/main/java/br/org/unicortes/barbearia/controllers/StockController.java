@@ -6,6 +6,7 @@ import br.org.unicortes.barbearia.models.Stock;
 import br.org.unicortes.barbearia.services.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class StockController {
     private StockService stockService;
 
     @GetMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<StockDTO>> getAllStocks() {
         List<StockDTO> stocks = stockService.getAllStocks().stream()
                 .map(this::convertToDTO)
@@ -28,12 +30,14 @@ public class StockController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<StockDTO> getStockById(@PathVariable Long id) {
         Stock stock = stockService.getStockById(id);
         return ResponseEntity.ok(convertToDTO(stock));
     }
 
     @GetMapping("/product/{productId}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<StockDTO>> getStocksByProductId(@PathVariable Long productId) {
         List<StockDTO> stocks = stockService.getStocksByProductId(productId).stream()
                 .map(this::convertToDTO)
@@ -42,6 +46,7 @@ public class StockController {
     }
 
     @GetMapping("/product/name/{name}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<StockDTO>> getStocksByProductName(@PathVariable String name) {
         List<StockDTO> stocks = stockService.getStocksByProductName(name).stream()
                 .map(this::convertToDTO)
@@ -50,6 +55,7 @@ public class StockController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<StockDTO> createStock(@RequestBody StockDTO stockDTO) {
         Stock stock = convertToEntity(stockDTO);
         Stock savedStock = stockService.createStock(stock);
@@ -57,6 +63,7 @@ public class StockController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<StockDTO> updateStock(@PathVariable Long id, @RequestBody StockDTO stockDTO) {
         Stock stock = convertToEntity(stockDTO);
         Stock updatedStock = stockService.updateStock(id, stock);
@@ -64,6 +71,7 @@ public class StockController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> deleteStock(@PathVariable Long id) {
         stockService.deleteStock(id);
         return ResponseEntity.noContent().build();

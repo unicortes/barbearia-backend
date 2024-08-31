@@ -5,6 +5,7 @@ import br.org.unicortes.barbearia.dtos.BarberDTO;
 import br.org.unicortes.barbearia.services.BarberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class BarberController {
     private BarberService barberService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BarberDTO> createBarber(@RequestBody BarberDTO barberDTO){
         Barber barber = convertToEntity(barberDTO);
         Barber novoBarber = barberService.createBarber(barber);
@@ -25,6 +27,7 @@ public class BarberController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BarberDTO> updateBarber(@PathVariable Long id, @RequestBody BarberDTO barberDTO) {
         Barber barber = convertToEntity(barberDTO);
         Barber barberAtualizado = barberService.updateBarber(id, barber);
@@ -32,18 +35,21 @@ public class BarberController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarBarber(@PathVariable Long id) {
         barberService.deleteBarber(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Barber>> listBarber() {
         List<Barber> barbers = barberService.listAllBarbers();
         return ResponseEntity.ok(barbers);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BarberDTO> getBarberById(@PathVariable Long id) {
         Barber barber = barberService.getBarberById(id);
         return ResponseEntity.ok(convertToDTO(barber));

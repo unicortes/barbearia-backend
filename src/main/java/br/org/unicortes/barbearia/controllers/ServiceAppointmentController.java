@@ -115,6 +115,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/{barberId}/daily-schedule")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointmentDTO>> getDailySchedule(
             @PathVariable Long barberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date) {
@@ -126,11 +127,11 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/timeRange/{barberId}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(
             @PathVariable Long barberId,
             @RequestParam LocalDateTime startDateTime,
             @RequestParam LocalDateTime endDateTime) {
         return serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
     }
-
 }

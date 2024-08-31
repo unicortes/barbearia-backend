@@ -8,6 +8,7 @@ import br.org.unicortes.barbearia.services.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class ServicoController {
     private ServicoService serviceServico;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<ServicoDTO>getServicoById(@PathVariable Long id){
         ServicoDTO servicoDTO=new ServicoDTO();
 
@@ -35,7 +37,9 @@ public class ServicoController {
         }
 
     }
+
     @GetMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServicoDTO>>getAllServicos(){
 
         List<ServicoDTO>servicoDTOS=new ArrayList<>();
@@ -50,11 +54,11 @@ public class ServicoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<ServicoDTO>createServico(@RequestBody ServicoDTO servicoDTO){
         Servico servico=getEntity(servicoDTO);
 
         try{
-
             Servico ret = serviceServico.createServico(servico);
             ServicoDTO servicoSalvo = servicoGetTo(ret);
 
@@ -67,7 +71,9 @@ public class ServicoController {
         }
 
     }
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     private ResponseEntity<ServicoDTO>updateServico(@PathVariable Long id, @RequestBody ServicoDTO servicoDTO){
 
         try{
@@ -86,6 +92,7 @@ public class ServicoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
         try{
@@ -100,6 +107,7 @@ public class ServicoController {
         }
 
     }
+
     private ServicoDTO servicoGetTo(Servico servico){
         ServicoDTO servicoDTO=new ServicoDTO();
         servicoDTO.setId(servico.getId());
