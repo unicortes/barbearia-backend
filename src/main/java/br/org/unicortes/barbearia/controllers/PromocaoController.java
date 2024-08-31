@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import br.org.unicortes.barbearia.models.Promocao;
@@ -20,6 +21,7 @@ public class PromocaoController {
     private PromocaoService promocaoService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
 	public List<Promocao> getAllPromocao() {
         return promocaoService.getAllPromocao();
     }
@@ -33,12 +35,14 @@ public class PromocaoController {
     }
     
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Promocao> criarPromocao(@RequestBody Promocao promocao) {
         Promocao novaPromocao = promocaoService.savePromocao(promocao);
         return new ResponseEntity<>(novaPromocao, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Promocao> editarPromocao(@PathVariable Long id, @RequestBody Promocao promocao) {
         try {
             Promocao promocaoAtualizada = promocaoService.updatePromocao(id, promocao);
@@ -49,6 +53,7 @@ public class PromocaoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletarPromocao(@PathVariable Long id) {
         try {
             promocaoService.deletePromocao(id);
