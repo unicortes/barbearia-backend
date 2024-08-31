@@ -26,13 +26,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String redirectUrl = null;
 
        switch (usuario.getRole()) {
-            case "ADMIN":
+            case "ROLE_ADMIN":
                 redirectUrl = "/barbeariaUnicortes/admin/home";
                 break;
-            case "BARBER":
+            case "ROLE_BARBER":
                 redirectUrl = "/barbeariaUnicortes/barbeiro/home";
                 break;
-            case "CLIENT":
+            case "ROLE_CLIENT":
                 redirectUrl = "/barbeariaUnicortes/cliente/home";
                 break;
             default:
