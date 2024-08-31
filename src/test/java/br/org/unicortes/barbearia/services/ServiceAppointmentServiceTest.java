@@ -88,7 +88,7 @@ public class ServiceAppointmentServiceTest {
         dto.setId(1L);
         dto.setServiceId(2L);
         dto.setBarberId(3L);
-        dto.setClientName("John Doe");
+        dto.setClientName("Teste");
         dto.setAppointmentDateTime(LocalDateTime.now());
         dto.setStatus(ServiceAppointmentStatus.PENDENTE);
         dto.setAvailable(true);
