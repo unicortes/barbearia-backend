@@ -28,11 +28,6 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
 
-    @GetMapping
-    public String auth() {
-        return "Hello World";
-    }
-
     @GetMapping("/admin/test")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> testAdminAccess() {
