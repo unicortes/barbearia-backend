@@ -46,9 +46,30 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(authService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/register").hasRole("ADMIN")
-                        .requestMatchers("*/admin/*").hasRole("ADMIN")
-                        .requestMatchers("*/barbeiro/*").hasRole("BARBER")
-                        .requestMatchers("*/cliente/*").hasRole("CLIENT")
+                        .requestMatchers(
+                                "/api/loytalty-cars/**",
+                                "/api/promocoes/**",
+                                "/api/stocks/**",
+                                "/api/available-times/**",
+                                "/api/barber/**",
+                                "/api/clients/**",
+                                "/api/sales/**",
+                                "/api/servicos/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/available-times/**",
+                                "/api/loytalty-cars/**",
+                                "/api/sales/**",
+                                "/api/appointments/**",
+                                "/api/servicos",
+                                "/api/stocks/**"
+                        ).hasRole("BARBER")
+                        .requestMatchers(
+                                "/api/available-times/",
+                                "/api/appointments",
+                                "/api/appointments/available"
+                        ).hasRole("CLIENT")
+                        .requestMatchers("/home").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

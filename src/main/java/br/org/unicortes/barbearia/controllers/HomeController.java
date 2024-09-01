@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/")
+@RequestMapping("/home")
 public class HomeController {
-    @GetMapping("/cliente/home")
+    @GetMapping("/cliente")
     public String clientHome(){
         return "Cliente Home";
     }
 
-    @GetMapping("/admin/home")
+    @GetMapping("/admin")
     public String adminHome(){
         return "Admin Home";
     }
 
-    @GetMapping("/barbeiro/home")
+    @GetMapping("/barbeiro")
     public String barberHome(){
         return "Barber Home";
     }

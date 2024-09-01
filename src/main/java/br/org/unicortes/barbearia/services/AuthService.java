@@ -1,5 +1,6 @@
 package br.org.unicortes.barbearia.services;
 
+import br.org.unicortes.barbearia.exceptions.UserAlreadyExistsException;
 import br.org.unicortes.barbearia.models.Usuario;
 
 import br.org.unicortes.barbearia.repositories.UsuarioRepository;
@@ -64,7 +65,7 @@ public class AuthService implements UserDetailsService {
 
     public Usuario createUser(Usuario user) {
         if (usuarioRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Usuário já existe");//Criar exceção especifica
+            throw new UserAlreadyExistsException();
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.usuarioRepository.save(user);
