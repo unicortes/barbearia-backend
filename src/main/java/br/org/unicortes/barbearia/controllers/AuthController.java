@@ -51,7 +51,7 @@ public class AuthController {
     public ResponseEntity<Usuario> loginUser(@RequestBody Usuario usuario) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getPassword());
 
-        Authentication authentication = this.authenticationManager.authenticate(token);
+       // Authentication authentication = this.authenticationManager.authenticate(token);
         UserDetails userDetails = this.authService.loadUserByUsername(usuario.getEmail());
         Usuario user = this.authService.getUsuarioByEmail(userDetails.getUsername());
         user.setToken(this.authService.gerarToken(user));
