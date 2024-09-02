@@ -9,6 +9,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Jwts;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.*;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,21 @@ public class AuthService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     private final String secretKey = "secreta";
+
+    @PostConstruct
+    public void init() {
+        criarUsuarioAdmin();
+    }
+
+    public void criarUsuarioAdmin() {
+            Usuario admin = new Usuario();
+            admin.setName("Admin");
+            admin.setEmail("admin@admin.com");
+            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setRole("ADMIN");
+
+            usuarioRepository.save(admin);
+    }
 
 
     @Override
