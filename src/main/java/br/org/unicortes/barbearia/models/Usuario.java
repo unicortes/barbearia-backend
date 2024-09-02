@@ -48,10 +48,7 @@ public class Usuario implements UserDetails{
     }
 
     public boolean isAdmin() {
-        if(this.role.equals("ADMIN")){
-            return true;
-        }else{
-            return false;
-        }
+        return this.role != null && this.role.equals("ADMIN");
+
     }
 }
