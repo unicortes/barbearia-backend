@@ -188,6 +188,105 @@ public class ServiceAppointmentIntegrationTest {
         performAuthenticatedRequest(HttpMethod.DELETE, "/api/appointments/1", null, status().isNoContent());
     }
 
+    @Test
+    @WithMockUser(username = "barberUser", roles = "BARBER")
+    public void testFindAppointmentsByDateAfter() throws Exception {
+        LocalDateTime dateTime = LocalDateTime.now().minusDays(1);
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+
+        when(serviceAppointmentService.findByAppointmentDateTimeAfter(dateTime)).thenReturn(appointments);
+
+        MvcResult result = performAuthenticatedRequest(HttpMethod.GET, "/api/appointments/after/" + dateTime.toString(), null, status().isOk())
+                .andExpect(jsonPath("$[0].id").value(serviceAppointment.getId()))
+                .andExpect(jsonPath("$[0].clientName").value(serviceAppointment.getClientName()))
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "barberUser", roles = "BARBER")
+    public void testFindAppointmentsBetweenDates() throws Exception {
+        LocalDateTime start = LocalDateTime.now().minusDays(5);
+        LocalDateTime end = LocalDateTime.now().plusDays(5);
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+
+        when(serviceAppointmentService.findByAppointmentDateTimeBetween(start, end)).thenReturn(appointments);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/appointments/between")
+                        .param("start", start.toString())
+                        .param("end", end.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(serviceAppointment.getId()))
+                .andExpect(jsonPath("$[0].clientName").value(serviceAppointment.getClientName()))
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "barberUser", roles = "BARBER")
+    public void testUpdateAppointmentStatus() throws Exception {
+
+        when(serviceAppointmentService.updateAppointmentStatus(1L, ServiceAppointmentStatus.CONFIRMADO))
+                .thenReturn(serviceAppointment);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/appointments/1/status")
+                        .param("status", ServiceAppointmentStatus.CONFIRMADO.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+
+    @Test
+    @WithMockUser(username = "barberUser", roles = "BARBER")
+    public void testGetDailySchedule() throws Exception {
+        LocalDateTime date = LocalDateTime.now();
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+        List<ServiceAppointmentDTO> appointmentDTOs = appointments.stream()
+                .map(serviceAppointmentService::convertToDTO)
+                .collect(Collectors.toList());
+
+        when(serviceAppointmentService.findAppointmentsByBarberAndDate(1L, date)).thenReturn(appointments);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/appointments/barber/1/daily-schedule")
+                        .param("date", date.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "barberUser", roles = "BARBER")
+    public void testGetAppointmentsByBarberAndDateTimeRange() throws Exception {
+        LocalDateTime startDateTime = LocalDateTime.now().minusDays(1);
+        LocalDateTime endDateTime = LocalDateTime.now().plusDays(1);
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+
+        when(serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(1L, startDateTime, endDateTime))
+                .thenReturn(appointments);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/appointments/barber/timeRange/1")
+                        .param("startDateTime", startDateTime.toString())
+                        .param("endDateTime", endDateTime.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(serviceAppointment.getId()))
+                .andExpect(jsonPath("$[0].clientName").value(serviceAppointment.getClientName()))
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
     @EnableWebSecurity
     static class TestSecurityConfig {
 
