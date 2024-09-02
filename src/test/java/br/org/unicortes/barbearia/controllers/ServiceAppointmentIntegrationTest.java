@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.reflect.Array.get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -285,6 +286,45 @@ public class ServiceAppointmentIntegrationTest {
                 .andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "BARBER")
+    public void testUpdateAppointmentStatusWhenAppointmentNotFound() throws Exception {
+        ServiceAppointmentStatus newStatus = ServiceAppointmentStatus.CONFIRMADO;
+
+        when(serviceAppointmentService.updateAppointmentStatus(1L, newStatus)).thenThrow(new IllegalArgumentException("Appointment not found"));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/appointments/{id}/status", 1L)
+                        .param("status", newStatus.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testGetAppointmentsByBarberAndDateTimeRangeService() {
+        Long barberId = 1L;
+        LocalDateTime startDateTime = LocalDateTime.of(2024, 9, 1, 8, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2024, 9, 1, 12, 0);
+
+        ServiceAppointment serviceAppointment = new ServiceAppointment();
+        serviceAppointment.setId(1L);
+        serviceAppointment.setClientName("Teste 1");
+
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+
+        when(serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime))
+                .thenReturn(appointments);
+
+        List<ServiceAppointment> result = serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Teste 1", result.get(0).getClientName());
     }
 
     @EnableWebSecurity
