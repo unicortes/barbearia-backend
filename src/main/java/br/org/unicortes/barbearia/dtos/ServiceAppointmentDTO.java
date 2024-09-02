@@ -21,5 +21,4 @@ public class ServiceAppointmentDTO {
     private LocalDateTime appointmentDateTime;
     private ServiceAppointmentStatus status;
     private boolean available;
-
 }

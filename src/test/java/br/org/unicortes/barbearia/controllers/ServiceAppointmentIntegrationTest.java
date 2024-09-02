@@ -36,14 +36,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.reflect.Array.get;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -82,7 +87,7 @@ public class ServiceAppointmentIntegrationTest {
                 .id(1L)
                 .service(null)
                 .barber(null)
-                .clientName("John Doe")
+                .clientName("Teste 1")
                 .appointmentDateTime(LocalDateTime.now())
                 .status(ServiceAppointmentStatus.PENDENTE)
                 .available(true)
@@ -92,7 +97,7 @@ public class ServiceAppointmentIntegrationTest {
                 .id(1L)
                 .serviceId(1L)
                 .barberId(1L)
-                .clientName("John Doe")
+                .clientName("Teste 1")
                 .appointmentDateTime(LocalDateTime.now())
                 .status(ServiceAppointmentStatus.PENDENTE)
                 .available(true)
@@ -179,6 +184,7 @@ public class ServiceAppointmentIntegrationTest {
         assertEquals(200, result.getResponse().getStatus());
     }
 
+
     @Test
     @WithMockUser(username = "testuser", roles = "ADMIN")
     public void testDeleteAppointment() throws Exception {
@@ -187,6 +193,94 @@ public class ServiceAppointmentIntegrationTest {
 
         performAuthenticatedRequest(HttpMethod.DELETE, "/api/appointments/1", null, status().isNoContent());
     }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "BARBER")
+    public void testUpdateAppointmentStatusWhenAppointmentNotFound() throws Exception {
+        ServiceAppointmentStatus newStatus = ServiceAppointmentStatus.CONFIRMADO;
+
+        when(serviceAppointmentService.updateAppointmentStatus(1L, newStatus)).thenThrow(new IllegalArgumentException("Appointment not found"));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/appointments/{id}/status", 1L)
+                        .param("status", newStatus.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "BARBER")
+    public void testUpdateAppointmentStatus() throws Exception {
+        ServiceAppointmentStatus newStatus = ServiceAppointmentStatus.CONFIRMADO;
+        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime dateFormatted = date.truncatedTo(ChronoUnit.SECONDS);
+        ServiceAppointment updatedAppointment = ServiceAppointment.builder()
+                .id(1L)
+                .service(null)
+                .barber(null)
+                .clientName("Teste 1")
+                .appointmentDateTime(dateFormatted)
+                .status(newStatus)
+                .available(true)
+                .build();
+        ServiceAppointmentDTO updatedAppointmentDTO = ServiceAppointmentDTO.builder()
+                .id(1L)
+                .serviceId(1L)
+                .barberId(1L)
+                .availableTime(1L)
+                .clientName("Teste 1")
+                .appointmentDateTime(dateFormatted)
+                .status(newStatus)
+                .available(true)
+                .build();
+
+        when(serviceAppointmentService.updateAppointmentStatus(1L, newStatus)).thenReturn(updatedAppointment);
+        when(serviceAppointmentService.convertToDTO(updatedAppointment)).thenReturn(updatedAppointmentDTO);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put("/api/appointments/{id}/status", 1L)
+                        .param("status", newStatus.toString())
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(updatedAppointmentDTO.getId()))
+                .andExpect(jsonPath("$.status").value(newStatus.toString()))
+                .andExpect(jsonPath("$.serviceId").value(updatedAppointmentDTO.getServiceId()))
+                .andExpect(jsonPath("$.barberId").value(updatedAppointmentDTO.getBarberId()))
+                .andExpect(jsonPath("$.availableTime").value(updatedAppointmentDTO.getAvailableTime()))
+                .andExpect(jsonPath("$.clientName").value(updatedAppointmentDTO.getClientName()))
+                .andExpect(jsonPath("$.appointmentDateTime").value(updatedAppointmentDTO.getAppointmentDateTime().toLocalDate().toString() + "T" + updatedAppointmentDTO.getAppointmentDateTime().toLocalTime().toString()))
+                .andExpect(jsonPath("$.available").value(updatedAppointmentDTO.isAvailable()))
+                .andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+
+    @Test
+    public void testGetAppointmentsByBarberAndDateTimeRangeService() {
+        Long barberId = 1L;
+        LocalDateTime startDateTime = LocalDateTime.of(2024, 9, 1, 8, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2024, 9, 1, 12, 0);
+
+        ServiceAppointment serviceAppointment = new ServiceAppointment();
+        serviceAppointment.setId(1L);
+        serviceAppointment.setClientName("Teste 1");
+
+        List<ServiceAppointment> appointments = Arrays.asList(serviceAppointment);
+
+        when(serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime))
+                .thenReturn(appointments);
+
+        List<ServiceAppointment> result = serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Teste 1", result.get(0).getClientName());
+    }
+
 
     @EnableWebSecurity
     static class TestSecurityConfig {

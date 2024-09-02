@@ -132,5 +132,4 @@ public class ServiceAppointmentController {
             @RequestParam LocalDateTime endDateTime) {
         return serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
     }
-
 }
