@@ -29,11 +29,9 @@ public class ServiceAppointmentController {
 
     @GetMapping
     @PreAuthorize("hasRole('BARBER, CLIENT, ADMIN')")
-    public ResponseEntity<List<ServiceAppointmentDTO>> getAllAppointments() {
-        List<ServiceAppointmentDTO> appointmentDTOs = serviceAppointmentService.findAll().stream()
-                .map(serviceAppointmentService::convertToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(appointmentDTOs);
+    public ResponseEntity<List<ServiceAppointment>> getAllAppointments() {
+        List<ServiceAppointment> appointment = serviceAppointmentService.findAll();
+        return ResponseEntity.ok(appointment);
     }
 
     @GetMapping("/{id}")
@@ -115,6 +113,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/{barberId}/daily-schedule")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointmentDTO>> getDailySchedule(
             @PathVariable Long barberId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime date) {
@@ -126,6 +125,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/timeRange/{barberId}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public List<ServiceAppointment> getAppointmentsByBarberAndDateTimeRange(
             @PathVariable Long barberId,
             @RequestParam LocalDateTime startDateTime,

@@ -1,5 +1,6 @@
 package br.org.unicortes.barbearia.services;
 
+import br.org.unicortes.barbearia.exceptions.UserAlreadyExistsException;
 import br.org.unicortes.barbearia.models.Usuario;
 
 import br.org.unicortes.barbearia.repositories.UsuarioRepository;
@@ -10,8 +11,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,7 +47,7 @@ public class AuthService implements UserDetailsService {
             return User.builder()
                     .username(user.getEmail())
                     .password(user.getPassword())
-                    .roles(user.getRole())
+                    .roles(getRoles(user))
                     .build();
         } else {
             throw new UsernameNotFoundException("Usuário não encontrado com o email: " + username);
@@ -62,7 +65,7 @@ public class AuthService implements UserDetailsService {
 
     public Usuario createUser(Usuario user) {
         if (usuarioRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Usuário já existe");//Criar exceção especifica
+            throw new UserAlreadyExistsException();
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.usuarioRepository.save(user);
@@ -75,7 +78,7 @@ public class AuthService implements UserDetailsService {
    public String gerarToken(Usuario usuario){
         return JWT.create()
                 .withSubject(usuario.getEmail())
-                .withClaim("roles", List.of(usuario.getRole()))
+                .withClaim("roles", List.of(getRoles(usuario)))
                 .withExpiresAt(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00")))
                 .sign(Algorithm.HMAC256("secreta"));
     }
@@ -118,10 +121,15 @@ public class AuthService implements UserDetailsService {
                     return Collections.emptyList();
                 }
                 return roles.stream()
-                        .map(role -> new SimpleGrantedAuthority(role))
+                        .map(role -> new SimpleGrantedAuthority("ROLE_"+role))
                         .collect(Collectors.toList());
             }
         }
         return Collections.emptyList();
+    }
+
+    public Usuario getPrincipal() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return this.getUsuarioByEmail(auth.getName());
     }
 }

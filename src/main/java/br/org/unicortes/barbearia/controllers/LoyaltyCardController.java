@@ -8,6 +8,9 @@ import br.org.unicortes.barbearia.services.LoyaltyCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +24,11 @@ public class LoyaltyCardController {
     @Autowired
     private LoyaltyCardService loyaltyCardService;
 
-    @GetMapping
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<List<LoyaltyCardDTO>> getAllLoyaltyCards() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getAuthorities());
         List<LoyaltyCardDTO> loyaltyCards = loyaltyCardService.getAllLoyaltyCards().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -30,12 +36,14 @@ public class LoyaltyCardController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> getLoyaltyCardById(@PathVariable Long id) {
         LoyaltyCard loyaltyCard = loyaltyCardService.getLoyaltyCardById(id);
         return ResponseEntity.ok(convertToDTO(loyaltyCard));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> createLoyaltyCard(@RequestBody LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = convertToEntity(loyaltyCardDTO);
         LoyaltyCard newLoyaltyCard = loyaltyCardService.createLoyaltyCard(loyaltyCard);
@@ -43,6 +51,7 @@ public class LoyaltyCardController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<LoyaltyCardDTO> updateLoyaltyCard(@PathVariable Long id, @RequestBody LoyaltyCardDTO loyaltyCardDTO) {
         LoyaltyCard loyaltyCard = convertToEntity(loyaltyCardDTO);
         LoyaltyCard updatedLoyaltyCard = loyaltyCardService.updateLoyaltyCard(id, loyaltyCard);
@@ -50,6 +59,7 @@ public class LoyaltyCardController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BARBER, ADMIN')")
     public ResponseEntity<Void> deleteLoyaltyCard(@PathVariable Long id) {
         loyaltyCardService.deleteLoyaltyCard(id);
         return ResponseEntity.noContent().build();

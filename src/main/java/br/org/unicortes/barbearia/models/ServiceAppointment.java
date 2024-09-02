@@ -43,8 +43,4 @@ public class ServiceAppointment {
 
     @Column(name = "available", nullable = false)
     private boolean available;
-
-    public boolean isEditable() {
-        return this.status == ServiceAppointmentStatus.PENDENTE;
-    }
 }
