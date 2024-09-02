@@ -29,11 +29,9 @@ public class ServiceAppointmentController {
 
     @GetMapping
     @PreAuthorize("hasRole('BARBER, CLIENT, ADMIN')")
-    public ResponseEntity<List<ServiceAppointmentDTO>> getAllAppointments() {
-        List<ServiceAppointmentDTO> appointmentDTOs = serviceAppointmentService.findAll().stream()
-                .map(serviceAppointmentService::convertToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(appointmentDTOs);
+    public ResponseEntity<List<ServiceAppointment>> getAllAppointments() {
+        List<ServiceAppointment> appointment = serviceAppointmentService.findAll();
+        return ResponseEntity.ok(appointment);
     }
 
     @GetMapping("/{id}")

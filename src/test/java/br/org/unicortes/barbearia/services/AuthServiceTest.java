@@ -86,4 +86,67 @@ class AuthServiceTest {
 
         assertFalse(isValid);
     }
+
+    @Test
+    void createUserSuccess() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("novo@exemplo.com");
+        usuario.setPassword("senha123");
+        usuario.setRole("ADMIN");
+
+        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
+        when(passwordEncoder.encode("senha123")).thenReturn("senha123_encoded");
+
+        authService.createUser(usuario);
+
+        verify(usuarioRepository, times(1)).save(any(Usuario.class));
+    }
+
+    @Test
+    void validarTokenValido() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("teste@exemplo.com");
+        usuario.setRole("ADMIN");
+
+        String token = authService.gerarToken(usuario);
+
+        boolean isValid = authService.validateToken(token);
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    void loadUserByNullUsername() {
+        assertThrows(UsernameNotFoundException.class, () ->
+                authService.loadUserByUsername(null));
+    }
+
+    @Test
+    void encodePasswordOnCreateUser() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("novo@exemplo.com");
+        usuario.setPassword("senha123");
+        usuario.setRole("ADMIN");
+
+        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
+        when(passwordEncoder.encode("senha123")).thenReturn("senha123_encoded");
+
+        authService.createUser(usuario);
+
+        verify(passwordEncoder, times(1)).encode("senha123");
+        assertEquals("senha123_encoded", usuario.getPassword());
+    }
+
+    @Test
+    void createUserNewUser() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("novo@exemplo.com");
+        usuario.setPassword("senha123");
+        usuario.setRole("ADMIN");
+        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
+
+        authService.createUser(usuario);
+
+        verify(usuarioRepository, times(1)).save(usuario);
+    }
 }

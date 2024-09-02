@@ -153,4 +153,80 @@ public class ServiceAppointmentServiceTest {
         assertTrue(result.stream().allMatch(ServiceAppointment::isAvailable));
         verify(serviceAppointmentRepository, times(1)).findByServiceIdAndAvailableIsTrue(anyLong());
     }
+
+    @Test
+    public void testSaveServiceAppointment() {
+        ServiceAppointment appointment = new ServiceAppointment();
+        when(serviceAppointmentRepository.save(any(ServiceAppointment.class))).thenReturn(appointment);
+
+        ServiceAppointment savedAppointment = serviceAppointmentService.save(appointment);
+
+        assertNotNull(savedAppointment);
+        verify(serviceAppointmentRepository, times(1)).save(appointment);
+    }
+
+    @Test
+    public void testDeleteServiceAppointment() {
+        doNothing().when(serviceAppointmentRepository).deleteById(anyLong());
+
+        serviceAppointmentService.deleteById(1L);
+
+        verify(serviceAppointmentRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void testUpdateAppointmentStatusThrowsExceptionWhenNotFound() {
+        when(serviceAppointmentRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () ->
+                serviceAppointmentService.updateAppointmentStatus(1L, ServiceAppointmentStatus.CONFIRMADO)
+        );
+    }
+
+    @Test
+    public void testFindAllReturnsEmptyList() {
+        when(serviceAppointmentRepository.findAll()).thenReturn(List.of());
+
+        List<ServiceAppointment> result = serviceAppointmentService.findAll();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(serviceAppointmentRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testFindByStatus() {
+        ServiceAppointment appointment1 = new ServiceAppointment();
+        appointment1.setStatus(ServiceAppointmentStatus.PENDENTE);
+        ServiceAppointment appointment2 = new ServiceAppointment();
+        appointment2.setStatus(ServiceAppointmentStatus.PENDENTE);
+
+        when(serviceAppointmentRepository.findByStatus(ServiceAppointmentStatus.PENDENTE))
+                .thenReturn(List.of(appointment1, appointment2));
+
+        List<ServiceAppointment> result = serviceAppointmentService.findByStatus(ServiceAppointmentStatus.PENDENTE);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(a -> a.getStatus() == ServiceAppointmentStatus.PENDENTE));
+        verify(serviceAppointmentRepository, times(1)).findByStatus(ServiceAppointmentStatus.PENDENTE);
+    }
+
+    @Test
+    public void testDeleteServiceAppointmentThrowsExceptionWhenNotFound() {
+        doThrow(new RuntimeException("Appointment not found")).when(serviceAppointmentRepository).deleteById(anyLong());
+
+        assertThrows(RuntimeException.class, () -> serviceAppointmentService.deleteById(1L));
+    }
+
+    @Test
+    public void testFindAvailableAppointmentsReturnsEmptyList() {
+        when(serviceAppointmentRepository.findByServiceIdAndAvailableIsTrue(anyLong())).thenReturn(List.of());
+
+        List<ServiceAppointment> result = serviceAppointmentService.findAvailableAppointments(1L);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(serviceAppointmentRepository, times(1)).findByServiceIdAndAvailableIsTrue(anyLong());
+    }
 }

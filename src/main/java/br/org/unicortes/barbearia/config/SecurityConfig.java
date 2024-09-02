@@ -54,15 +54,16 @@ public class SecurityConfig {
                                 "/api/barber/**",
                                 "/api/clients/**",
                                 "/api/sales/**",
-                                "/api/servicos/**"
+                                "/api/servicos/**",
+                                "/api/appointments/**"
                         ).hasRole("ADMIN")
                         .requestMatchers(
                                 "/api/available-times/**",
                                 "/api/loytalty-cars/**",
                                 "/api/sales/**",
-                                "/api/appointments/**",
                                 "/api/servicos",
-                                "/api/stocks/**"
+                                "/api/stocks/**",
+                                "/api/appointments/**"
                         ).hasRole("BARBER")
                         .requestMatchers(
                                 "/api/available-times/",

@@ -5,9 +5,11 @@ import br.org.unicortes.barbearia.enums.ServiceAppointmentStatus;
 import br.org.unicortes.barbearia.models.ServiceAppointment;
 import br.org.unicortes.barbearia.models.Servico;
 import br.org.unicortes.barbearia.models.Barber;
+import br.org.unicortes.barbearia.models.Usuario;
 import br.org.unicortes.barbearia.repositories.ServiceAppointmentRepository;
 import br.org.unicortes.barbearia.repositories.ServicoRepository;
 import br.org.unicortes.barbearia.repositories.BarberRepository;
+import br.org.unicortes.barbearia.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +24,16 @@ public class ServiceAppointmentService {
     private final ServicoRepository servicoRepository;
     private final BarberRepository barberRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
     @Autowired
     public ServiceAppointmentService(ServiceAppointmentRepository serviceAppointmentRepository,
                                      ServicoRepository servicoRepository,
-                                     BarberRepository barberRepository) {
+                                     BarberRepository barberRepository, UsuarioRepository usuarioRepository) {
         this.serviceAppointmentRepository = serviceAppointmentRepository;
         this.servicoRepository = servicoRepository;
         this.barberRepository = barberRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public List<ServiceAppointment> findAll() {
@@ -40,7 +45,12 @@ public class ServiceAppointmentService {
     }
 
     public List<ServiceAppointment> findByBarberId(Long barberId) {
-        return serviceAppointmentRepository.findByBarberId(barberId);
+        Optional<Usuario> user = this.usuarioRepository.findById(barberId);
+        Barber barber = new Barber();
+        if(user.isPresent()){
+            barber=this.barberRepository.findByName(user.get().getName());
+        }
+        return serviceAppointmentRepository.findByBarberId(barber.getId());
     }
 
     public List<ServiceAppointment> findByStatus(ServiceAppointmentStatus status) {
