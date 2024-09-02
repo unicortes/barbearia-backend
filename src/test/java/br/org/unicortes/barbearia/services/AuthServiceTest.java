@@ -34,15 +34,15 @@ class AuthServiceTest {
     @Test
     void loadUserByValidUser() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste@exemplo.com");
+        usuario.setEmail("teste_1@exemplo.com");
         usuario.setPassword("senha123");
         usuario.setRole("ADMIN");
-        when(usuarioRepository.findByEmail("teste@exemplo.com")).thenReturn(usuario);
+        when(usuarioRepository.findByEmail("teste_1@exemplo.com")).thenReturn(usuario);
 
-        UserDetails userDetails = authService.loadUserByUsername("teste@exemplo.com");
+        UserDetails userDetails = authService.loadUserByUsername("teste_1@exemplo.com");
 
         assertNotNull(userDetails);
-        assertEquals("teste@exemplo.com", userDetails.getUsername());
+        assertEquals("teste_1@exemplo.com", userDetails.getUsername());
         assertEquals("senha123", userDetails.getPassword());
         assertTrue(userDetails.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")));
@@ -59,8 +59,8 @@ class AuthServiceTest {
     @Test
     void createUserAlreadyExistent() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste@exemplo.com");
-        when(usuarioRepository.findByEmail("teste@exemplo.com")).thenReturn(usuario);
+        usuario.setEmail("teste_2@exemplo.com");
+        when(usuarioRepository.findByEmail("teste_2@exemplo.com")).thenReturn(usuario);
 
         assertThrows(RuntimeException.class, () ->
                 authService.createUser(usuario));
@@ -69,7 +69,7 @@ class AuthServiceTest {
     @Test
     void gerarTokenValido() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste@exemplo.com");
+        usuario.setEmail("teste_3@exemplo.com");
         usuario.setRole("ADMIN");
 
         String token = authService.gerarToken(usuario);
@@ -105,7 +105,7 @@ class AuthServiceTest {
     @Test
     void validarTokenValido() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste@exemplo.com");
+        usuario.setEmail("teste_4@exemplo.com");
         usuario.setRole("ADMIN");
 
         String token = authService.gerarToken(usuario);
@@ -124,11 +124,11 @@ class AuthServiceTest {
     @Test
     void encodePasswordOnCreateUser() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("novo@exemplo.com");
+        usuario.setEmail("novo_1@exemplo.com");
         usuario.setPassword("senha123");
         usuario.setRole("ADMIN");
 
-        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
+        when(usuarioRepository.findByEmail("novo_1@exemplo.com")).thenReturn(null);
         when(passwordEncoder.encode("senha123")).thenReturn("senha123_encoded");
 
         authService.createUser(usuario);
@@ -140,10 +140,10 @@ class AuthServiceTest {
     @Test
     void createUserNewUser() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("novo@exemplo.com");
+        usuario.setEmail("novo_2@exemplo.com");
         usuario.setPassword("senha123");
         usuario.setRole("ADMIN");
-        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
+        when(usuarioRepository.findByEmail("novo_2@exemplo.com")).thenReturn(null);
 
         authService.createUser(usuario);
 
