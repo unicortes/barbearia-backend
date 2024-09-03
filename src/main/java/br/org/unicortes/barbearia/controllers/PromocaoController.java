@@ -27,6 +27,7 @@ public class PromocaoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Promocao> getPromocaoById(@PathVariable Long id) {
         Optional<Promocao> promocao = promocaoService.getPromocaoById(id);
         return promocao

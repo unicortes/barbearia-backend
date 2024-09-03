@@ -42,14 +42,14 @@ public class BarberController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('CLIENT, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<List<Barber>> listBarber() {
         List<Barber> barbers = barberService.listAllBarbers();
         return ResponseEntity.ok(barbers);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('CLIENT, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<BarberDTO> getBarberById(@PathVariable Long id) {
         Barber barber = barberService.getBarberById(id);
         return ResponseEntity.ok(convertToDTO(barber));
