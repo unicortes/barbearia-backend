@@ -23,7 +23,7 @@ public class ServicoController {
     private ServicoService serviceServico;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<ServicoDTO>getServicoById(@PathVariable Long id){
         ServicoDTO servicoDTO=new ServicoDTO();
 
@@ -39,7 +39,7 @@ public class ServicoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<List<ServicoDTO>>getAllServicos(){
 
         List<ServicoDTO>servicoDTOS=new ArrayList<>();
