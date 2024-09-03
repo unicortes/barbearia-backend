@@ -55,7 +55,8 @@ public class SecurityConfig {
                                 "/api/clients/**",
                                 "/api/sales/**",
                                 "/api/servicos/**",
-                                "/api/appointments/**"
+                                "/api/appointments/**",
+                                "/api/products/**"
                         ).hasRole("ADMIN")
                         .requestMatchers(
                                 "/api/available-times/**",
@@ -63,12 +64,15 @@ public class SecurityConfig {
                                 "/api/sales/**",
                                 "/api/servicos",
                                 "/api/stocks/**",
-                                "/api/appointments/**"
+                                "/api/appointments/**",
+                                "/api/products/**"
                         ).hasRole("BARBER")
                         .requestMatchers(
                                 "/api/available-times/",
                                 "/api/appointments",
-                                "/api/appointments/available"
+                                "/api/appointments/available",
+                                "/api/barber/**",
+                                "/api/servicos/**"
                         ).hasRole("CLIENT")
                         .requestMatchers("/home").permitAll()
                         .anyRequest().authenticated()
