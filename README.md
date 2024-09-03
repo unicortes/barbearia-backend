@@ -24,9 +24,11 @@ Em desenvolvimento
 Acesso Admin: 
 - Login: admin@admin.com 
 - Senha: admin
+
 Acesso Barbeiro: 
 - Login: barber@barber.com 
 - Senha: admin
+
 Acesso Cliente:
 - Login: client@client.com 
 - Senha: admin
