@@ -144,12 +144,12 @@ class AuthIntegrationTest {
     @Test
     void loginUserWithInvalidToken() throws Exception {
         Usuario user = new Usuario();
-        user.setEmail("test@exemplo.com");
+        user.setEmail("test_1@exemplo.com");
         user.setPassword("password");
         user.setToken("invalid-jwt-token");
 
-        Mockito.when(authService.loadUserByUsername("test@exemplo.com")).thenReturn(user);
-        Mockito.when(authService.getUsuarioByEmail("test@exemplo.com")).thenReturn(user);
+        Mockito.when(authService.loadUserByUsername("test_1@exemplo.com")).thenReturn(user);
+        Mockito.when(authService.getUsuarioByEmail("test_1@exemplo.com")).thenReturn(user);
         Mockito.when(authService.gerarToken(Mockito.any(Usuario.class))).thenReturn("invalid-jwt-token");
         Mockito.when(authService.validateToken("invalid-jwt-token")).thenReturn(false);
 
@@ -164,7 +164,7 @@ class AuthIntegrationTest {
     @WithMockUser(roles = "ADMIN")
     void registerUserWithEncodedPassword() throws Exception {
         Usuario newUser = new Usuario();
-        newUser.setEmail("newuser@exemplo.com");
+        newUser.setEmail("newuser_1@exemplo.com");
         newUser.setEmail("CLIENT");
         newUser.setPassword("plainpassword");
 
