@@ -40,21 +40,6 @@ public class AuthService implements UserDetailsService {
 
     private final String secretKey = "secreta";
 
-    @PostConstruct
-    public void init() {
-        criarUsuarioAdmin();
-    }
-
-    public void criarUsuarioAdmin() {
-            Usuario admin = new Usuario();
-            admin.setName("Admin");
-            admin.setEmail("admin@admin.com");
-            admin.setPassword(passwordEncoder.encode("admin"));
-            admin.setRole("ADMIN");
-
-            usuarioRepository.save(admin);
-    }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
