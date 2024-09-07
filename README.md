@@ -19,4 +19,16 @@ O sistema será desenvolvido para permitir que um cliente de barbearia faça o c
 ## :construction: Status do Projeto
 Em desenvolvimento
 ## :keyboard: Acessando o sistema
-Você poderá fazer Login no sistema com o e-mail *barbeiro@gmail.com* ou *cliente@gmail.com*  e Senha *password*
+[Unicortes](https://barbearia-frontend-seven.vercel.app/)
+
+Acesso Admin: 
+- Login: admin@admin.com 
+- Senha: admin
+
+Acesso Barbeiro: 
+- Login: barber@barber.com 
+- Senha: admin
+
+Acesso Cliente:
+- Login: client@client.com 
+- Senha: admin

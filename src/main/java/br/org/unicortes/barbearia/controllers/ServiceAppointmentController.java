@@ -35,7 +35,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<ServiceAppointmentDTO> getAppointmentById(@PathVariable Long id) {
         Optional<ServiceAppointment> appointmentOpt = serviceAppointmentService.findById(id);
         return appointmentOpt
@@ -44,7 +44,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/barber/{barberId}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByBarberId(@PathVariable Long barberId) {
         List<ServiceAppointment> appointments = serviceAppointmentService.findByBarberId(barberId);
         return ResponseEntity.ok(appointments);
@@ -58,7 +58,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/after/{dateTime}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByAppointmentDateTimeAfter(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
         List<ServiceAppointment> appointments = serviceAppointmentService.findByAppointmentDateTimeAfter(dateTime);
@@ -66,7 +66,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/between")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<List<ServiceAppointment>> findByAppointmentDateTimeBetween(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
@@ -104,7 +104,7 @@ public class ServiceAppointmentController {
     }
 
     @GetMapping("/available")
-    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT, BARBER')")
     public ResponseEntity<List<ServiceAppointmentDTO>> getAvailableAppointments(@RequestParam Long serviceId) {
         List<ServiceAppointmentDTO> availableAppointmentDTOs = serviceAppointmentService.findAvailableAppointments(serviceId).stream()
                 .map(serviceAppointmentService::convertToDTO)
