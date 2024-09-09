@@ -1,40 +1,65 @@
 name: Testes de Pull Requests
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Checar o código
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK
         uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: '17'
-          distribution: 'adopt'
-      - run: java br.org.unicortes.barbearia.services.BarberServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.ClientServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.LoyaltyCardServiceTest.java
-      - run: java Dtest=br.org.unicortes.barbearia.services.ProductServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.PromocaoServiceTest.java
-      - run: java Dtest=br.org.unicortes.barbearia.services.SaleServiceTest.java
-      - run: java  br.org.unicortes.barbearia.services.ServicoServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.StockServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.ServiceAppointmentServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.AvailableTimeServiceTest.java
-      - run: java br.org.unicortes.barbearia.services.AuthServiceTest.java
-      - run: java br.org.unicortes.barbearia.controllers.BarberIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.ClientIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.LoyaltyCardIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.ProductIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.PromocaoIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.SaleIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.ServicoIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.StockIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.ServiceAppointmentIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.AvailableTimeIntegrationTest.java
-      - run: java br.org.unicortes.barbearia.controllers.AuthIntegrationTest.java
+
+      - name: Cache do Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Instalar Maven (opcional, se necessário)
+        run: sudo apt-get install -y maven
+
+      - name: Construir e rodar testes
+        run: mvn clean verify
+
+      - name: Rodar testes específicos
+        run: |
+            mvn -Dtest=br.org.unicortes.barbearia.services.BarberServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ClientServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.LoyaltyCardServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ProductServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.PromocaoServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.SaleServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ServicoServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.StockServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.ServiceAppointmentServiceTest test 
+            mvn -Dtest=br.org.unicortes.barbearia.services.AvailableTimeServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.services.AuthServiceTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.BarberIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ClientIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.LoyaltyCardIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ProductIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.PromocaoIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.SaleIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ServicoIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.StockIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.ServiceAppointmentIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.AvailableTimeIntegrationTest test
+            mvn -Dtest=br.org.unicortes.barbearia.controllers.AuthIntegrationTest test
 
       - name: Exibir versão do Maven (opcional, para depuração)
         run: mvn -version
