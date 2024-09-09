@@ -33,7 +33,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
         Usuario usuario = this.usuarioService.getUsuarioById(id);
