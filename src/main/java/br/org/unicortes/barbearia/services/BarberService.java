@@ -14,7 +14,7 @@ public class BarberService {
     @Autowired
     private BarberRepository barberRepository;
 
-    public Optional<Barber> getBarberById(Long id) {
+    public Optional<Barber> getBarber(long id) {
         return barberRepository.findById(id);
     }
 

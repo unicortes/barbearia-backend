@@ -20,16 +20,18 @@ public class ServiceAppointmentService {
     private final BarberRepository barberRepository;
     private final ClientRepository clientRepository;
     private final UsuarioRepository usuarioRepository;
+    private final AvailableTimeRepository availableTimeRepository;
 
     @Autowired
     public ServiceAppointmentService(ServiceAppointmentRepository serviceAppointmentRepository,
                                      ServicoRepository servicoRepository,
-                                     BarberRepository barberRepository, UsuarioRepository usuarioRepository, ClientRepository clientRepository) {
+                                     BarberRepository barberRepository, UsuarioRepository usuarioRepository, ClientRepository clientRepository, AvailableTimeRepository availableTimeRepository) {
         this.serviceAppointmentRepository = serviceAppointmentRepository;
         this.servicoRepository = servicoRepository;
         this.barberRepository = barberRepository;
         this.usuarioRepository = usuarioRepository;
         this.clientRepository=clientRepository;
+        this.availableTimeRepository=availableTimeRepository;
     }
 
     public List<ServiceAppointment> findAll() {
@@ -134,19 +136,27 @@ public class ServiceAppointmentService {
         ServiceAppointment serviceAppointment = new ServiceAppointment();
         serviceAppointment.setId(dto.getId());
 
-        Optional<Servico> serviceOpt = servicoRepository.findById(dto.getServiceId());
+        Optional<Servico> serviceOpt = servicoRepository.findById(dto.getService());
         if (serviceOpt.isPresent()) {
             serviceAppointment.setService(serviceOpt.get());
         } else {
-            throw new IllegalArgumentException("Serviço não encontrado para o ID: " + dto.getServiceId());
+            throw new IllegalArgumentException("Serviço não encontrado para o ID: " + dto.getService());
         }
 
-        Optional<Barber> barberOpt = barberRepository.findById(dto.getBarberId());
+        Optional<Barber> barberOpt = barberRepository.findById(dto.getBarber());
         if (barberOpt.isPresent()) {
             serviceAppointment.setBarber(barberOpt.get());
         } else {
-            throw new IllegalArgumentException("Barbeiro não encontrado para o ID: " + dto.getBarberId());
+            throw new IllegalArgumentException("Barbeiro não encontrado para o ID: " + dto.getBarber());
         }
+
+        Optional<AvailableTime> availableTimeOpt = availableTimeRepository.findById(dto.getAvailableTime());
+        if (availableTimeOpt.isPresent()) {
+            serviceAppointment.setAvailableTime(availableTimeOpt.get());
+        } else {
+            throw new IllegalArgumentException("Horário disponível não encontrado para o ID: " + dto.getAvailableTime());
+        }
+
 
         serviceAppointment.setClientName(dto.getClientName());
         serviceAppointment.setAppointmentDateTime(dto.getAppointmentDateTime());
@@ -163,11 +173,12 @@ public class ServiceAppointmentService {
 
         ServiceAppointmentDTO dto = new ServiceAppointmentDTO();
         dto.setId(entity.getId());
-        dto.setServiceId(entity.getService().getId());
-        dto.setBarberId(entity.getBarber().getId());
+        dto.setService(entity.getService().getId());
+        dto.setBarber(entity.getBarber().getId());
         dto.setClientName(entity.getClientName());
         dto.setAppointmentDateTime(entity.getAppointmentDateTime());
         dto.setStatus(entity.getStatus());
+        dto.setAvailableTime(entity.getId());
         dto.setAvailable(entity.isAvailable());
 
         return dto;

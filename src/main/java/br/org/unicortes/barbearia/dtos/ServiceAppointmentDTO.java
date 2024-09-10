@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ServiceAppointmentDTO {
     private Long id;
-    private Long serviceId;
-    private Long barberId;
+    private Long service;
+    private Long barber;
     private Long availableTime;
     private String clientName;
     private LocalDateTime appointmentDateTime;

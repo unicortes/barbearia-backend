@@ -91,8 +91,8 @@ public class ServiceAppointmentIntegrationTest {
 
         serviceAppointmentDTO = ServiceAppointmentDTO.builder()
                 .id(1L)
-                .serviceId(1L)
-                .barberId(1L)
+                .service(1L)
+                .barber(1L)
                 .clientName("John Doe")
                 .appointmentDateTime(LocalDateTime.now())
                 .status(ServiceAppointmentStatus.PENDENTE)
