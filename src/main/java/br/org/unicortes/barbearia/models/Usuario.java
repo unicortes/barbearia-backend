@@ -51,4 +51,5 @@ public class Usuario implements UserDetails{
         return this.role != null && this.role.equals("ADMIN");
 
     }
+
 }

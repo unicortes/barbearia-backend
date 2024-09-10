@@ -34,3 +34,5 @@ build/
 
 ### Properties Files ###
 *.properties
+
+.bin/
