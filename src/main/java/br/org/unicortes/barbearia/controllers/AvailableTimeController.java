@@ -1,11 +1,10 @@
 package br.org.unicortes.barbearia.controllers;
 
-import br.org.unicortes.barbearia.models.AvailableTime;
+import br.org.unicortes.barbearia.dtos.AvailableTimeDTO;
+import br.org.unicortes.barbearia.exceptions.ServicoNotFoundException;
 import br.org.unicortes.barbearia.services.AvailableTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,45 +13,36 @@ import java.util.List;
 @RequestMapping("/api/available-times")
 public class AvailableTimeController {
 
-    private final AvailableTimeService availableTimeService;
-
     @Autowired
-    public AvailableTimeController(AvailableTimeService availableTimeService) {
-        this.availableTimeService = availableTimeService;
-    }
+    private AvailableTimeService availableTimeService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
-    public ResponseEntity<AvailableTime> createAvailableTime(@RequestBody AvailableTime availableTime) {
-        AvailableTime createdAvailableTime = availableTimeService.create(availableTime);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdAvailableTime);
-    }
-
-    @GetMapping("/service/{serviceId}")
-    @PreAuthorize("hasRole('BARBER, CLIENT, ADMIN')")
-    public ResponseEntity<List<AvailableTime>> getAvailableTimesByServiceId(@PathVariable Long serviceId) {
-        List<AvailableTime> availableTimes = availableTimeService.findByServiceId(serviceId);
+    @GetMapping
+    public ResponseEntity<List<AvailableTimeDTO>> getAll() {
+        List<AvailableTimeDTO> availableTimes = availableTimeService.getAll();
         return ResponseEntity.ok(availableTimes);
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('BARBER, CLIENT, ADMIN')")
-    public ResponseEntity<List<AvailableTime>> getAllAvailableTimes() {
-        List<AvailableTime> availableTimes = availableTimeService.getAll();
+    @PostMapping
+    public ResponseEntity<AvailableTimeDTO> create(@RequestBody AvailableTimeDTO availableTimeDTO) throws ServicoNotFoundException {
+        AvailableTimeDTO createdAvailableTime = availableTimeService.create(availableTimeDTO);
+        return ResponseEntity.ok(createdAvailableTime);
+    }
+
+    @GetMapping("/service/{serviceId}")
+    public ResponseEntity<List<AvailableTimeDTO>> findByServiceId(@PathVariable Long serviceId) {
+        List<AvailableTimeDTO> availableTimes = availableTimeService.findByServiceId(serviceId);
+        return ResponseEntity.ok(availableTimes);
+    }
+
+    @GetMapping("/scheduled/false")
+    public ResponseEntity<List<AvailableTimeDTO>> findByIsScheduledFalse() {
+        List<AvailableTimeDTO> availableTimes = availableTimeService.findByIsScheduledFalse();
         return ResponseEntity.ok(availableTimes);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
-    public ResponseEntity<Void> deleteAvailableTime(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTime(@PathVariable Long id) {
         availableTimeService.deleteTime(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/unscheduled")
-    @PreAuthorize("hasAnyRole('BARBER', 'CLIENT')")
-    public ResponseEntity<List<AvailableTime>> getUnscheduledTimes() {
-        List<AvailableTime> unscheduledTimes = availableTimeService.findByIsScheduledFalse();
-        return ResponseEntity.ok(unscheduledTimes);
     }
 }

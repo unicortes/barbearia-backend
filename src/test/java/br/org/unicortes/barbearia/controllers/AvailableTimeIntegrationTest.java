@@ -1,6 +1,6 @@
 package br.org.unicortes.barbearia.controllers;
 
-import br.org.unicortes.barbearia.models.AvailableTime;
+import br.org.unicortes.barbearia.dtos.AvailableTimeDTO;
 import br.org.unicortes.barbearia.services.AuthService;
 import br.org.unicortes.barbearia.services.AvailableTimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,10 +27,10 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -74,21 +74,27 @@ public class AvailableTimeIntegrationTest {
     @Test
     @WithMockUser(username = "testuser", roles = "ADMIN")
     void createAvailableTime() throws Exception {
-        AvailableTime availableTime = new AvailableTime();
-        availableTime.setId(1L);
+        AvailableTimeDTO availableTimeDTO = AvailableTimeDTO.builder()
+                .id(1L)
+                .barber(1L)
+                .service(1L)
+                .timeStart(LocalDateTime.of(2024, 9, 9, 10, 0))
+                .timeEnd(LocalDateTime.of(2024, 9, 9, 11, 0))
+                .isScheduled(false)
+                .build();
 
-        when(availableTimeService.create(any(AvailableTime.class))).thenReturn(availableTime);
+        when(availableTimeService.create(any(AvailableTimeDTO.class))).thenReturn(availableTimeDTO);
 
-        performAuthenticatedRequest(HttpMethod.POST, "/api/available-times", availableTime, MockMvcResultMatchers.status().isCreated())
+        performAuthenticatedRequest(HttpMethod.POST, "/api/available-times", availableTimeDTO, MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "ADMIN")
     void getAvailableTimesByServiceId() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
         Long serviceId = 1L;
 
         when(availableTimeService.findByServiceId(serviceId)).thenReturn(times);
@@ -100,16 +106,15 @@ public class AvailableTimeIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty())
                 .andReturn();
 
-        assertNotNull(result.getResponse());
         assertEquals(200, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = "ADMIN")
     void getAllAvailableTimes() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
 
         when(availableTimeService.getAll()).thenReturn(times);
 
@@ -131,9 +136,9 @@ public class AvailableTimeIntegrationTest {
     @Test
     @WithMockUser(username = "testuser", roles = "ADMIN")
     void getUnscheduledTimes() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
 
         when(availableTimeService.findByIsScheduledFalse()).thenReturn(times);
 

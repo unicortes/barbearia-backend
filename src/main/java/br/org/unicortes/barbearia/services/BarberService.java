@@ -13,6 +13,10 @@ public class BarberService {
     @Autowired
     private BarberRepository barberRepository;
 
+    public Barber getBarber(long id) {
+        return barberRepository.findById(id);
+    }
+
     public Barber createBarber(Barber barber) {
         if (barberRepository.existsByName(barber.getName())) {
             throw new BarberAlreadyExistsException(barber.getName());

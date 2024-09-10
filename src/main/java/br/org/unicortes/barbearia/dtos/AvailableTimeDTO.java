@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Builder
 public class AvailableTimeDTO {
     private Long id;
-    private Long barberId;
-    private Long serviceId;
-    private LocalDateTime timeStart;
-    private LocalDateTime timeEnd;
+    private Long barber;
+    private Long service;
+    private Date timeStart;
+    private Date timeEnd;
     private boolean isScheduled;
 }

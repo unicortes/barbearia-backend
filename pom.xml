@@ -88,8 +88,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
