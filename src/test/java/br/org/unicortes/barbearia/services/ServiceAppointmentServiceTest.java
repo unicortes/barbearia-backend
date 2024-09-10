@@ -86,8 +86,8 @@ public class ServiceAppointmentServiceTest {
     public void testConvertToEntity() {
         ServiceAppointmentDTO dto = new ServiceAppointmentDTO();
         dto.setId(1L);
-        dto.setServiceId(2L);
-        dto.setBarberId(3L);
+        dto.setService(2L);
+        dto.setBarber(3L);
         dto.setClientName("Teste");
         dto.setAppointmentDateTime(LocalDateTime.now());
         dto.setStatus(ServiceAppointmentStatus.PENDENTE);
@@ -98,8 +98,8 @@ public class ServiceAppointmentServiceTest {
         Barber barber = new Barber();
         barber.setId(3L);
 
-        when(servicoRepository.findById(dto.getServiceId())).thenReturn(Optional.of(service));
-        when(barberRepository.findById(dto.getBarberId())).thenReturn(Optional.of(barber));
+        when(servicoRepository.findById(dto.getService())).thenReturn(Optional.of(service));
+        when(barberRepository.findById(dto.getBarber())).thenReturn(Optional.of(barber));
 
         ServiceAppointment entity = serviceAppointmentService.convertToEntity(dto);
 
