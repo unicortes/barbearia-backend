@@ -1,6 +1,5 @@
 package br.org.unicortes.barbearia.repositories;
 
-import br.org.unicortes.barbearia.models.Barber;
 import br.org.unicortes.barbearia.models.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
