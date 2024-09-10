@@ -132,4 +132,12 @@ public class ServiceAppointmentController {
             @RequestParam LocalDateTime endDateTime) {
         return serviceAppointmentService.getAppointmentsByBarberAndDateTimeRange(barberId, startDateTime, endDateTime);
     }
+
+    @GetMapping("/client/{clientId}")
+    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
+    public ResponseEntity<List<ServiceAppointment>> getAppointmentsByClientName(@PathVariable Long clientId) {
+        List<ServiceAppointment> appointments = serviceAppointmentService.findByClientId(clientId);
+        return ResponseEntity.ok(appointments);
+    }
+
 }
