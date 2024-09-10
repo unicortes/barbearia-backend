@@ -58,12 +58,6 @@ public class UsuarioService {
         Usuario usuario = this.usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("user"));
 
-        if (usuario.getRole().equals("BARBER")) {
-            barberRepository.deleteByUsuarioId(id);
-        } else if (usuario.getRole().equals("CLIENT")) {
-            clientRepository.deleteByUsuarioId(id);
-        }
-
         this.usuarioRepository.delete(usuario);
     }
 }

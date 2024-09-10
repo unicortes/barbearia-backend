@@ -42,22 +42,21 @@ public class ServiceAppointmentService {
         return serviceAppointmentRepository.findById(id);
     }
 
-    public List<ServiceAppointment> findByBarberId(Long userId) {
-        Optional<Usuario> user = this.usuarioRepository.findById(userId);
-        Barber barber = new Barber();
-        if(user.isPresent()){
-            barber=this.barberRepository.findByUsuarioId(userId);
-        }
-        List<ServiceAppointment>apo=serviceAppointmentRepository.findByBarberId(barber.getId());
-        return apo;
+    public List<ServiceAppointment> findByBarberId(Long id) {
+        Optional<Usuario> user = this.usuarioRepository.findById(id);
+        Optional<Barber> barber = Optional.of(new Barber());
+        barber=this.barberRepository.findById(id);
+
+        List<ServiceAppointment>appointments=serviceAppointmentRepository.findByBarberId(barber);
+        return appointments;
     }
-    public List<ServiceAppointment> findByClientId(Long userId) {
-        Optional<Usuario> user = this.usuarioRepository.findById(userId);
-        Client client = new Client();
+    public List<ServiceAppointment> findByClientId(Long id) {
+        Optional<Usuario> user = this.usuarioRepository.findById(id);
+        Optional<Client> client = Optional.of(new Client());
         List<ServiceAppointment>appointments=new ArrayList<>();
         if(user.isPresent()){
-            client=this.clientRepository.findByUsuarioId(user.get().getId());
-            appointments=serviceAppointmentRepository.findByClientName(client.getName());
+            client=this.clientRepository.findById(id);
+            appointments=serviceAppointmentRepository.findByClientName(String.valueOf(client));
         }
 
         return appointments;

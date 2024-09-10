@@ -27,10 +27,6 @@ public class Barber{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
-
     @NotBlank(message = "O nome é obrigatório")
     private String name;
 
