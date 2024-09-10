@@ -92,9 +92,9 @@ public class ServiceAppointmentController {
         }
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/{status}")
     @PreAuthorize("hasRole('BARBER, ADMIN')")
-    public ResponseEntity<ServiceAppointmentDTO> updateAppointmentStatus(@PathVariable Long id, @RequestParam ServiceAppointmentStatus status) {
+    public ResponseEntity<ServiceAppointmentDTO> updateAppointmentStatus(@PathVariable Long id, @PathVariable ServiceAppointmentStatus status) {
         try {
             ServiceAppointment updatedAppointment = serviceAppointmentService.updateAppointmentStatus(id, status);
             return ResponseEntity.ok(serviceAppointmentService.convertToDTO(updatedAppointment));
