@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/register").hasRole("ADMIN")
                         .requestMatchers(
                                 "/api/loytalty-cars/**",
-                                "/api/promocoes/**",
+                                "/api/promotions/**",
                                 "/api/barber/**",
                                 "/api/servicos/**",
                                 "/api/stocks/**",
