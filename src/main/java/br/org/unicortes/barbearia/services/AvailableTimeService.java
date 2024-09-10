@@ -1,6 +1,7 @@
 package br.org.unicortes.barbearia.services;
 
 import br.org.unicortes.barbearia.dtos.AvailableTimeDTO;
+import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import br.org.unicortes.barbearia.exceptions.ServicoNotFoundException;
 import br.org.unicortes.barbearia.models.AvailableTime;
 import br.org.unicortes.barbearia.models.Barber;
@@ -51,10 +52,14 @@ public class AvailableTimeService {
     }
 
     public void deleteTime(Long id) {
+        if (!availableTimeRepository.existsById(id)) {
+            throw new ResourceNotFoundException(id);
+        }
         availableTimeRepository.deleteById(id);
     }
 
-    private AvailableTime convertToEntity(AvailableTimeDTO dto) throws ServicoNotFoundException {
+
+    public AvailableTime convertToEntity(AvailableTimeDTO dto) throws ServicoNotFoundException {
         AvailableTime availableTime = new AvailableTime();
         availableTime.setId(dto.getId());
 
@@ -72,7 +77,7 @@ public class AvailableTimeService {
         return availableTime;
     }
 
-    private AvailableTimeDTO convertToDTO(AvailableTime availableTime) {
+    public AvailableTimeDTO convertToDTO(AvailableTime availableTime) {
         return AvailableTimeDTO.builder()
                 .id(availableTime.getId())
                 .barber(availableTime.getBarber().getId())
