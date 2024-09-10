@@ -17,9 +17,8 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Table(name = "tb_promocaos")
+@Table(name = "tb_promotions")
 public class Promocao {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -49,28 +48,4 @@ public class Promocao {
     @NotNull(message = "A data final é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataFim;
-
-    @ManyToMany
-    @JoinTable(
-        name = "promocao_product",
-        joinColumns = @JoinColumn(name = "promocao_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> produtos = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-        name = "promocao_servico",
-        joinColumns = @JoinColumn(name = "promocao_id"),
-        inverseJoinColumns = @JoinColumn(name = "servico_id")
-    )
-    private Set<Servico> servicos = new HashSet<>();
-
-
-   
-
-    
-
-    
-
 }

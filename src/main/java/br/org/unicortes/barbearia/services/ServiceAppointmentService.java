@@ -2,18 +2,13 @@ package br.org.unicortes.barbearia.services;
 
 import br.org.unicortes.barbearia.dtos.ServiceAppointmentDTO;
 import br.org.unicortes.barbearia.enums.ServiceAppointmentStatus;
-import br.org.unicortes.barbearia.models.ServiceAppointment;
-import br.org.unicortes.barbearia.models.Servico;
-import br.org.unicortes.barbearia.models.Barber;
-import br.org.unicortes.barbearia.models.Usuario;
-import br.org.unicortes.barbearia.repositories.ServiceAppointmentRepository;
-import br.org.unicortes.barbearia.repositories.ServicoRepository;
-import br.org.unicortes.barbearia.repositories.BarberRepository;
-import br.org.unicortes.barbearia.repositories.UsuarioRepository;
+import br.org.unicortes.barbearia.models.*;
+import br.org.unicortes.barbearia.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +18,18 @@ public class ServiceAppointmentService {
     private final ServiceAppointmentRepository serviceAppointmentRepository;
     private final ServicoRepository servicoRepository;
     private final BarberRepository barberRepository;
-
+    private final ClientRepository clientRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
     public ServiceAppointmentService(ServiceAppointmentRepository serviceAppointmentRepository,
                                      ServicoRepository servicoRepository,
-                                     BarberRepository barberRepository, UsuarioRepository usuarioRepository) {
+                                     BarberRepository barberRepository, UsuarioRepository usuarioRepository, ClientRepository clientRepository) {
         this.serviceAppointmentRepository = serviceAppointmentRepository;
         this.servicoRepository = servicoRepository;
         this.barberRepository = barberRepository;
         this.usuarioRepository = usuarioRepository;
+        this.clientRepository=clientRepository;
     }
 
     public List<ServiceAppointment> findAll() {
@@ -44,13 +40,25 @@ public class ServiceAppointmentService {
         return serviceAppointmentRepository.findById(id);
     }
 
-    public List<ServiceAppointment> findByBarberId(Long barberId) {
-        Optional<Usuario> user = this.usuarioRepository.findById(barberId);
+    public List<ServiceAppointment> findByBarberId(Long userId) {
+        Optional<Usuario> user = this.usuarioRepository.findById(userId);
         Barber barber = new Barber();
         if(user.isPresent()){
-            barber=this.barberRepository.findByName(user.get().getName());
+            barber=this.barberRepository.findByUsuarioId(userId);
         }
-        return serviceAppointmentRepository.findByBarberId(barber.getId());
+        List<ServiceAppointment>apo=serviceAppointmentRepository.findByBarberId(barber.getId());
+        return apo;
+    }
+    public List<ServiceAppointment> findByClientId(Long userId) {
+        Optional<Usuario> user = this.usuarioRepository.findById(userId);
+        Client client = new Client();
+        List<ServiceAppointment>appointments=new ArrayList<>();
+        if(user.isPresent()){
+            client=this.clientRepository.findByUsuarioId(user.get().getId());
+            appointments=serviceAppointmentRepository.findByClientName(client.getName());
+        }
+
+        return appointments;
     }
 
     public List<ServiceAppointment> findByStatus(ServiceAppointmentStatus status) {
