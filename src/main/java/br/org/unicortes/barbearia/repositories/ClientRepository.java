@@ -8,6 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface ClientRepository extends JpaRepository<Client, Long> {
     boolean existsByName(String name);
     Client findByName(String name);
-    Client findByUsuarioId(Long id);
-    void deleteByUsuarioId(Long id);
 }

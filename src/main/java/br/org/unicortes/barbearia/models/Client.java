@@ -14,10 +14,6 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
-
     @NotBlank(message = "O campo 'name' é obrigatório")
     private String name;
 

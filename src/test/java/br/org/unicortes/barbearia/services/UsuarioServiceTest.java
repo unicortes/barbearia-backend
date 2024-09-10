@@ -102,7 +102,6 @@ class UsuarioServiceTest {
         usuarioService.deleteUsuario(id);
 
        
-        verify(barberRepository, times(1)).deleteByUsuarioId(id);
         verify(usuarioRepository, times(1)).delete(usuarioMock);
     }
 
@@ -116,9 +115,6 @@ class UsuarioServiceTest {
 
         
         usuarioService.deleteUsuario(id);
-
-       
-        verify(clientRepository, times(1)).deleteByUsuarioId(id);
         verify(usuarioRepository, times(1)).delete(usuarioMock);
     }
 }
