@@ -52,7 +52,7 @@ public class BarberController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<BarberDTO> getBarberById(@PathVariable Long id) {
-        Optional<Barber> barber = barberService.getBarberById(id);
+        Optional<Barber> barber = barberService.getBarber(id);
         return ResponseEntity.ok(convertToDTO(barber.orElse(null)));
     }
 
