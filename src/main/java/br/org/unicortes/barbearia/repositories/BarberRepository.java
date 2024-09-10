@@ -9,6 +9,8 @@ import java.util.Optional;
 @Repository
 public interface BarberRepository extends JpaRepository<Barber, Long> {
     boolean existsByName(String name);
-
+    Barber findByUsuarioId(Long id);
+    void deleteByUsuarioId(Long id);
     Barber findByName(String name);
+    Optional<Barber> findById(long id);
 }

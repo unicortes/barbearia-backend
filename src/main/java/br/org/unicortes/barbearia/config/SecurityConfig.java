@@ -47,8 +47,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/loytalty-cars/**",
                                 "/api/promocoes/**",
-                                "/api/barber/**",
-                                "/api/servicos/**",
                                 "/api/stocks/**",
                                 "/api/available-times/**",
                                 "/api/barber/**",
