@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -27,10 +27,10 @@ public class AvailableTime {
     private Servico service;
 
     @Column(name = "time_start", nullable = false)
-    private LocalDateTime timeStart;
+    private Date timeStart;
 
     @Column(name = "time_end", nullable = false)
-    private LocalDateTime timeEnd;
+    private Date timeEnd;
 
     @Column(name = "is_scheduled", nullable = false)
     private boolean isScheduled;

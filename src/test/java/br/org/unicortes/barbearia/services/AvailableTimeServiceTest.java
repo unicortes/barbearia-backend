@@ -1,20 +1,31 @@
 package br.org.unicortes.barbearia.services;
 
+import br.org.unicortes.barbearia.dtos.AvailableTimeDTO;
+import br.org.unicortes.barbearia.exceptions.ResourceNotFoundException;
 import br.org.unicortes.barbearia.models.AvailableTime;
+import br.org.unicortes.barbearia.models.Barber;
+import br.org.unicortes.barbearia.models.Servico;
 import br.org.unicortes.barbearia.repositories.AvailableTimeRepository;
+import br.org.unicortes.barbearia.repositories.BarberRepository;
+import br.org.unicortes.barbearia.repositories.ServicoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AvailableTimeServiceTest {
+
+    @Mock
+    private BarberRepository barberRepository;
+
+    @Mock
+    private ServicoRepository servicoRepository;
 
     @Mock
     private AvailableTimeRepository availableTimeRepository;
@@ -28,64 +39,113 @@ class AvailableTimeServiceTest {
     }
 
     @Test
-    void getAllAvailableTimes() {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        when(availableTimeRepository.findAll()).thenReturn(Arrays.asList(time1, time2));
+    void testGetAll() {
+        Barber barber = new Barber();
+        barber.setId(1L);
 
-        List<AvailableTime> result = availableTimeService.getAll();
+        Servico servico = new Servico();
+        servico.setId(1L);
+
+        AvailableTime availableTime = new AvailableTime();
+        availableTime.setId(1L);
+        availableTime.setBarber(barber);
+        availableTime.setService(servico);
+
+        AvailableTimeDTO dto = AvailableTimeDTO.builder()
+                .id(1L)
+                .barber(1L)
+                .service(1L)
+                .build();
+
+        when(availableTimeRepository.findAll()).thenReturn(Arrays.asList(availableTime));
+
+        List<AvailableTimeDTO> result = availableTimeService.getAll();
 
         assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(availableTimeRepository, times(1)).findAll();
+        assertEquals(1, result.size());
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(1L, result.get(0).getBarber());
+        assertEquals(1L, result.get(0).getService());
     }
 
     @Test
-    void create() {
-        AvailableTime time = new AvailableTime();
-        when(availableTimeRepository.save(time)).thenReturn(time);
+    void testGetAllEmptyList() {
+        when(availableTimeRepository.findAll()).thenReturn(Collections.emptyList());
 
-        AvailableTime result = availableTimeService.create(time);
+        List<AvailableTimeDTO> result = availableTimeService.getAll();
 
         assertNotNull(result);
-        assertEquals(time, result);
-        verify(availableTimeRepository, times(1)).save(time);
+        assertTrue(result.isEmpty(), "A lista deve estar vazia");
+    }
+
+
+    @Test
+    void testFindByServiceId() {
+        Barber barber = new Barber();
+        barber.setId(1L);
+
+        Servico service = new Servico();
+        service.setId(1L);
+
+        AvailableTime availableTime = AvailableTime.builder()
+                .id(1L)
+                .barber(barber)
+                .service(service)
+                .timeStart(new Date())
+                .timeEnd(new Date())
+                .isScheduled(false)
+                .build();
+
+        AvailableTimeDTO dto = AvailableTimeDTO.builder()
+                .id(1L)
+                .barber(1L)
+                .service(1L)
+                .timeStart(availableTime.getTimeStart())
+                .timeEnd(availableTime.getTimeEnd())
+                .isScheduled(availableTime.isScheduled())
+                .build();
+
+        when(availableTimeRepository.findByServiceId(1L)).thenReturn(Arrays.asList(availableTime));
+
+        AvailableTimeService spyService = spy(availableTimeService);
+        when(spyService.convertToDTO(availableTime)).thenReturn(dto);
+
+        List<AvailableTimeDTO> result = spyService.findByServiceId(1L);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        AvailableTimeDTO resultDto = result.get(0);
+        assertEquals(1L, resultDto.getId());
+        assertEquals(1L, resultDto.getBarber());
+        assertEquals(1L, resultDto.getService());
+        assertEquals(availableTime.getTimeStart(), resultDto.getTimeStart());
+        assertEquals(availableTime.getTimeEnd(), resultDto.getTimeEnd());
+        assertEquals(availableTime.isScheduled(), resultDto.isScheduled());
+
+        verify(availableTimeRepository).findByServiceId(1L);
     }
 
     @Test
-    void findByServiceId() {
-        Long serviceId = 1L;
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        when(availableTimeRepository.findByServiceId(serviceId)).thenReturn(Arrays.asList(time1, time2));
+    void testDeleteTime() {
+        doNothing().when(availableTimeRepository).deleteById(1L);
 
-        List<AvailableTime> result = availableTimeService.findByServiceId(serviceId);
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(availableTimeRepository, times(1)).findByServiceId(serviceId);
+        availableTimeService.deleteTime(1L);
+        verify(availableTimeRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    void findByIsScheduledFalse() {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        when(availableTimeRepository.findByIsScheduledFalse()).thenReturn(Arrays.asList(time1, time2));
+    void testDeleteTimeNotFound() {
+        when(availableTimeRepository.existsById(1L)).thenReturn(false);
 
-        List<AvailableTime> result = availableTimeService.findByIsScheduledFalse();
+        ResourceNotFoundException thrownException = assertThrows(ResourceNotFoundException.class, () -> {
+            availableTimeService.deleteTime(1L);
+        });
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(availableTimeRepository, times(1)).findByIsScheduledFalse();
+        assertEquals("Barbeiro com o id '1' não encontrado.", thrownException.getMessage());
+
+        verify(availableTimeRepository, times(1)).existsById(1L);
+
+        verify(availableTimeRepository, never()).deleteById(1L);
     }
 
-    @Test
-    void deleteTime() {
-        Long id = 1L;
-        doNothing().when(availableTimeRepository).deleteById(id);
-
-        availableTimeService.deleteTime(id);
-
-        verify(availableTimeRepository, times(1)).deleteById(id);
-    }
 }

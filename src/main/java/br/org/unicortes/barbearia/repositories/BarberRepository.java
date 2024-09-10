@@ -11,6 +11,4 @@ public interface BarberRepository extends JpaRepository<Barber, Long> {
     boolean existsByName(String name);
 
     Barber findByName(String name);
-    Barber findByUsuarioId(Long id);
-    void deleteByUsuarioId(Long id);
 }

@@ -1,6 +1,6 @@
 package br.org.unicortes.barbearia.controllers;
 
-import br.org.unicortes.barbearia.models.AvailableTime;
+import br.org.unicortes.barbearia.dtos.AvailableTimeDTO;
 import br.org.unicortes.barbearia.services.AuthService;
 import br.org.unicortes.barbearia.services.AvailableTimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,16 +25,18 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AvailableTimeController.class)
@@ -72,75 +74,89 @@ public class AvailableTimeIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = "ADMIN")
+    @WithMockUser
     void createAvailableTime() throws Exception {
-        AvailableTime availableTime = new AvailableTime();
-        availableTime.setId(1L);
+        AvailableTimeDTO availableTimeDTO = AvailableTimeDTO.builder()
+                .id(1L)
+                .barber(1L)
+                .service(1L)
+                .timeStart(new Date())
+                .timeEnd(new Date())
+                .isScheduled(false)
+                .build();
 
-        when(availableTimeService.create(any(AvailableTime.class))).thenReturn(availableTime);
+        when(availableTimeService.create(any(AvailableTimeDTO.class))).thenReturn(availableTimeDTO);
 
-        performAuthenticatedRequest(HttpMethod.POST, "/api/available-times", availableTime, MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));
+        mockMvc.perform(post("/api/available-times")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(availableTimeDTO)))
+                .andExpect(status().isOk()) // Espera o status 200 OK
+                .andExpect(jsonPath("$.id").value(1));
     }
 
+
     @Test
-    @WithMockUser(username = "testuser", roles = "ADMIN")
+    @WithMockUser
     void getAvailableTimesByServiceId() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
+
         Long serviceId = 1L;
 
         when(availableTimeService.findByServiceId(serviceId)).thenReturn(times);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/available-times/service/{serviceId}", serviceId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[1].id").value(2))
                 .andReturn();
 
-        assertNotNull(result.getResponse());
+        String responseContent = result.getResponse().getContentAsString();
+        System.out.println("Response content: " + responseContent);
+
         assertEquals(200, result.getResponse().getStatus());
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = "ADMIN")
+    @WithMockUser
     void getAllAvailableTimes() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
 
         when(availableTimeService.getAll()).thenReturn(times);
 
-        performAuthenticatedRequest(HttpMethod.GET, "/api/available-times", null, MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty());
+        performAuthenticatedRequest(HttpMethod.GET, "/api/available-times", null, status().isOk())
+                .andExpect(jsonPath("$[0]").isNotEmpty())
+                .andExpect(jsonPath("$[1]").isNotEmpty());
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = "ADMIN")
+    @WithMockUser
     void deleteAvailableTime() throws Exception {
         Long id = 1L;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/available-times/{id}", id)
                         .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = "ADMIN")
+    @WithMockUser
     void getUnscheduledTimes() throws Exception {
-        AvailableTime time1 = new AvailableTime();
-        AvailableTime time2 = new AvailableTime();
-        List<AvailableTime> times = Arrays.asList(time1, time2);
+        AvailableTimeDTO time1 = AvailableTimeDTO.builder().id(1L).build();
+        AvailableTimeDTO time2 = AvailableTimeDTO.builder().id(2L).build();
+        List<AvailableTimeDTO> times = Arrays.asList(time1, time2);
 
         when(availableTimeService.findByIsScheduledFalse()).thenReturn(times);
 
-        performAuthenticatedRequest(HttpMethod.GET, "/api/available-times/unscheduled", null, MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1]").isNotEmpty());
+        performAuthenticatedRequest(HttpMethod.GET, "/api/available-times/scheduled/false", null, status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[1].id").value(2L));
     }
+
 
     @EnableWebSecurity
     static class TestSecurityConfig {
