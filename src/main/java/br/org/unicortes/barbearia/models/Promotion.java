@@ -18,34 +18,38 @@ import lombok.Setter;
 @Entity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Table(name = "tb_promotions")
-public class Promocao {
+public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @NotBlank(message = "O título é obrigatório")
-    private String titulo;
+    @NotBlank(message = "O nome é obrigatório")
+    private String name;
 
     @NotBlank(message = "A descrição é obrigatória")
-    private String descricao;
+    private String description;
 
     @NotBlank(message = "O código da promoção é obrigatório")
-    private String codigoPromocao;
+    private String promotionCode;
 
     @NotBlank(message = "A categoria é obrigatória")
-    private String categoria;
+    private String category;
 
     @NotNull(message = "O desconto é obrigatório")
-    private double desconto;
+    private double discount;
 
-    @NotNull(message = "A disponibilidade é obrigatório")
-    private boolean disponibilidade;
+    @NotNull(message = "A disponibilidade é obrigatória")
+    private boolean availability;
     
     @NotNull(message = "A data de início é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataInicio;
+    private LocalDate startDate;
 
     @NotNull(message = "A data final é obrigatória")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataFim;
+    private LocalDate endDate;
+
+    public boolean getAvailability() {
+        return this.availability;
+    }
 }

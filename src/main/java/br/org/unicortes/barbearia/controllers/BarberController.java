@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -51,8 +52,8 @@ public class BarberController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
     public ResponseEntity<BarberDTO> getBarberById(@PathVariable Long id) {
-        Barber barber = barberService.getBarberById(id);
-        return ResponseEntity.ok(convertToDTO(barber));
+        Optional<Barber> barber = barberService.getBarberById(id);
+        return ResponseEntity.ok(convertToDTO(barber.orElse(null)));
     }
 
     private BarberDTO convertToDTO(Barber barber) {
