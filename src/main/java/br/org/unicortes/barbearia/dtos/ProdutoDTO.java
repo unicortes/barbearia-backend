@@ -1,0 +1,21 @@
+package br.org.unicortes.barbearia.dtos;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+@Builder
+public class ProdutoDTO {
+    private Long id;
+    private String nome;
+    private String descricao;
+    private String categoria;
+    private BigDecimal precoCusto;
+    private BigDecimal precoVenda;
+    private Integer quantidadeEstoque;
+    private LocalDate dataValidade;
+    private boolean ativo;
+}

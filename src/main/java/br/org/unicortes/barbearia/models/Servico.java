@@ -1,32 +1,44 @@
 package br.org.unicortes.barbearia.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Data
-@Entity(name="tb_servico")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "tb_servicos")
 public class Servico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O campo 'nome' é obrigatório")
-    @Size(min = 3, max = 50, message = "O nome deve ter entre 3 e 50 caracteres")
-    private String name;
+    @NotBlank(message = "Nome do serviço é obrigatório")
+    @Size(min = 3, max = 50, message = "Nome deve conter entre 3 e 50 caracteres")
+    @Column(nullable = false, unique = true, length = 50)
+    private String nome;
 
-    @NotBlank(message = "O campo 'descrição' é obrigatório")
-    @Size(max = 255, message = "A descrição deve ter menos que 255 caracteres")
-    private String description;
+    @NotBlank(message = "Descrição é obrigatória")
+    @Size(max = 255, message = "Descrição deve ter no máximo 255 caracteres")
+    @Column(nullable = false, length = 255)
+    private String descricao;
 
-    @NotNull(message = "O campo 'preço' é obrigatório")
-    @DecimalMin(value ="0.0", message = "O campo 'preço' deve ser maior ou igual a 0")
-    private double price;
+    @NotNull(message = "Preço é obrigatório")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Preço deve ser maior que zero")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal preco;
+
+    @Column(name = "duracao_padrao_minutos", nullable = false)
+    @Min(value = 15, message = "Duração mínima de 15 minutos")
+    @Builder.Default
+    private int duracaoPadraoMinutos = 30;
+
+    @Column(name = "ativo", nullable = false)
+    @Builder.Default
+    private boolean ativo = true;
 }

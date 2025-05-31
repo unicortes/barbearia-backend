@@ -5,13 +5,10 @@ import br.org.unicortes.barbearia.models.Usuario;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Usuario findByEmail(String email);
-    Usuario findByName(String name);
     Optional<Usuario> findById(Long id);
-
+    Optional<Usuario> findByEmail(String email);
+    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByEmail(String email);
 }

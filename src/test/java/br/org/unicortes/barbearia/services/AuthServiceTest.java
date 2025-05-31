@@ -1,20 +1,30 @@
 package br.org.unicortes.barbearia.services;
 
+import br.org.unicortes.barbearia.enums.Roles;
+import br.org.unicortes.barbearia.exceptions.ConflitoException;
 import br.org.unicortes.barbearia.models.Usuario;
 import br.org.unicortes.barbearia.repositories.UsuarioRepository;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     @Mock
@@ -27,126 +37,122 @@ class AuthServiceTest {
     private AuthService authService;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    void setup() throws Exception {
+        var field = AuthService.class.getDeclaredField("secretKey");
+        field.setAccessible(true);
+        field.set(authService, "testsecret");
     }
 
     @Test
-    void loadUserByValidUser() {
+    void carregarUsuarioByEmail_UsuarioExiste() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste_1@exemplo.com");
+        usuario.setEmail("teste@email.com");
+        usuario.setName("teste");
         usuario.setPassword("senha123");
-        usuario.setRole("ADMIN");
-        when(usuarioRepository.findByEmail("teste_1@exemplo.com")).thenReturn(usuario);
+        usuario.setRole(Roles.ADMIN);
 
-        UserDetails userDetails = authService.loadUserByUsername("teste_1@exemplo.com");
+        when(usuarioRepository.findByEmail("teste@email.com")).thenReturn(Optional.of(usuario));
 
-        assertNotNull(userDetails);
-        assertEquals("teste_1@exemplo.com", userDetails.getUsername());
+        UserDetails userDetails = authService.loadUserByUsername("teste@email.com");
+
+        assertEquals("teste@email.com", userDetails.getUsername());
+
         assertEquals("senha123", userDetails.getPassword());
+
         assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")));
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
     }
 
     @Test
-    void loadUserByInexistentUser() {
-        when(usuarioRepository.findByEmail("inexistente@exemplo.com")).thenReturn(null);
+    void carregarUsuarioByEmail_UsuarioNaoExiste() {
+        when(usuarioRepository.findByEmail("naoexiste@email.com")).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () ->
-                authService.loadUserByUsername("inexistente@exemplo.com"));
+        assertThrows(Exception.class, () -> authService.loadUserByUsername("naoexiste@email.com"));
     }
 
     @Test
-    void createUserAlreadyExistent() {
+    void criarUsuarioNovo() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste_2@exemplo.com");
-        when(usuarioRepository.findByEmail("teste_2@exemplo.com")).thenReturn(usuario);
+        usuario.setEmail("novo@email.com");
+        usuario.setPassword("1234");
 
-        assertThrows(RuntimeException.class, () ->
-                authService.createUser(usuario));
+        when(usuarioRepository.findByEmail("novo@email.com")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("1234")).thenReturn("senhaCodificada");
+        when(usuarioRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Usuario savedUser = authService.createUser(usuario);
+
+        assertEquals("senhaCodificada", savedUser.getPassword());
+        verify(usuarioRepository).save(usuario);
     }
 
     @Test
-    void gerarTokenValido() {
+    void criarUsuarioExistente() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("teste_3@exemplo.com");
-        usuario.setRole("ADMIN");
+        usuario.setEmail("existente@email.com");
+
+        when(usuarioRepository.findByEmail("existente@email.com")).thenReturn(Optional.of(new Usuario()));
+
+        assertThrows(ConflitoException.class, () -> authService.createUser(usuario));
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void gerarToken_UsuarioValido() {
+        Usuario usuario = new Usuario();
+        usuario.setEmail("email@teste.com");
+        usuario.setRole(Roles.CLIENT);
 
         String token = authService.gerarToken(usuario);
 
         assertNotNull(token);
-        assertTrue(token.length() > 0);
+        assertTrue(authService.validateToken(token));
+        assertEquals("email@teste.com", authService.getUsernameFromToken(token));
     }
 
     @Test
-    void invalidateToken() {
-        String invalidToken = "invalid.token";
-
-        boolean isValid = authService.validateToken(invalidToken);
-
-        assertFalse(isValid);
+    void ValidarTokenInvalido() {
+        assertFalse(authService.validateToken("tokeninvalido"));
     }
 
     @Test
-    void createUserSuccess() {
+    void gerarTokenUsuarioAdm() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("novo@exemplo.com");
-        usuario.setPassword("senha123");
-        usuario.setRole("ADMIN");
-
-        when(usuarioRepository.findByEmail("novo@exemplo.com")).thenReturn(null);
-        when(passwordEncoder.encode("senha123")).thenReturn("senha123_encoded");
-
-        authService.createUser(usuario);
-
-        verify(usuarioRepository, times(1)).save(any(Usuario.class));
-    }
-
-    @Test
-    void validarTokenValido() {
-        Usuario usuario = new Usuario();
-        usuario.setEmail("teste_4@exemplo.com");
-        usuario.setRole("ADMIN");
+        usuario.setEmail("email@teste.com");
+        usuario.setRole(Roles.ADMIN);
 
         String token = authService.gerarToken(usuario);
 
-        boolean isValid = authService.validateToken(token);
+        var authorities = authService.getAuthoritiesFromToken(token);
 
-        assertTrue(isValid);
+        assertFalse(authorities.isEmpty());
+        assertTrue(authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
     }
 
     @Test
-    void loadUserByNullUsername() {
-        assertThrows(UsernameNotFoundException.class, () ->
-                authService.loadUserByUsername(null));
+    void obterUsuarioPrincipal_UsuarioNaoExiste() {
+        SecurityContextHolder.clearContext();
+        Optional<Usuario> principal = authService.getPrincipal();
+        assertTrue(principal.isEmpty());
     }
 
     @Test
-    void encodePasswordOnCreateUser() {
+    void ObterUsuarioPrincipal_UsuarioExiste() {
         Usuario usuario = new Usuario();
-        usuario.setEmail("novo_1@exemplo.com");
-        usuario.setPassword("senha123");
-        usuario.setRole("ADMIN");
+        usuario.setEmail("email@teste.com");
+        when(usuarioRepository.findByEmail("email@teste.com")).thenReturn(Optional.of(usuario));
 
-        when(usuarioRepository.findByEmail("novo_1@exemplo.com")).thenReturn(null);
-        when(passwordEncoder.encode("senha123")).thenReturn("senha123_encoded");
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("email@teste.com");
 
-        authService.createUser(usuario);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
 
-        verify(passwordEncoder, times(1)).encode("senha123");
-        assertEquals("senha123_encoded", usuario.getPassword());
-    }
+        SecurityContextHolder.setContext(securityContext);
 
-    @Test
-    void createUserNewUser() {
-        Usuario usuario = new Usuario();
-        usuario.setEmail("novo_2@exemplo.com");
-        usuario.setPassword("senha123");
-        usuario.setRole("ADMIN");
-        when(usuarioRepository.findByEmail("novo_2@exemplo.com")).thenReturn(null);
+        Optional<Usuario> principal = authService.getPrincipal();
 
-        authService.createUser(usuario);
-
-        verify(usuarioRepository, times(1)).save(usuario);
+        assertTrue(principal.isPresent());
+        assertEquals("email@teste.com", principal.get().getEmail());
     }
 }

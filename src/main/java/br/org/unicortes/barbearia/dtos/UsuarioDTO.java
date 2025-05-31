@@ -1,18 +1,16 @@
 package br.org.unicortes.barbearia.dtos;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import br.org.unicortes.barbearia.enums.Roles;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 public class UsuarioDTO {
-     
     private Long id;
     private String name;
-    private String password;
     private String email;
-    private String role;
-    private String token;
+    private Roles role;
+    private boolean ativo;
+    private LocalDateTime tokenExpiration;
 }

@@ -1,63 +1,143 @@
 package br.org.unicortes.barbearia.services;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import br.org.unicortes.barbearia.exceptions.*;
+import br.org.unicortes.barbearia.models.*;
+import br.org.unicortes.barbearia.repositories.*;
+import br.org.unicortes.barbearia.services.interfaces.IUsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import br.org.unicortes.barbearia.exceptions.UsernameNotFoundException;
-import br.org.unicortes.barbearia.models.Usuario;
-import br.org.unicortes.barbearia.repositories.UsuarioRepository;
-import br.org.unicortes.barbearia.repositories.BarberRepository;
-import br.org.unicortes.barbearia.repositories.ClientRepository;
-import br.org.unicortes.barbearia.models.Barber;
-import br.org.unicortes.barbearia.models.Client;
+import java.util.List;
 
 @Service
-public class UsuarioService {
+@RequiredArgsConstructor
+public class UsuarioService implements IUsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final BarbeiroRepository barbeiroRepository;
+    private final ClienteRepository clienteRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private BarberRepository barberRepository;
-
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public List<Usuario> getAllUsuarios() {
+    @Override
+    @Transactional(readOnly = true)
+    public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
 
-    public Usuario getUsuarioById(Long id) {
-        return this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("user"));
+    @Override
+    @Transactional(readOnly = true)
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado"));
     }
 
-    public Usuario updateUsuario(Usuario usuario) {
-        Usuario usuarioAAtualizar = this.usuarioRepository.findByName(usuario.getName());
-
-        if (usuarioAAtualizar == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado com o nome: " + usuario.getName());
+    @Override
+    @Transactional
+    public Usuario criar(Usuario novoUsuario) {
+        if (usuarioRepository.existsByEmail(novoUsuario.getEmail())) {
+            throw new ConflitoException("Email já está em uso por outro usuário");
         }
 
-        usuarioAAtualizar.setEmail(usuario.getEmail());
-        usuarioAAtualizar.setName(usuario.getName());
-        usuarioAAtualizar.setRole(usuario.getRole());
-        usuarioAAtualizar.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        String senhaCodificada = passwordEncoder.encode(novoUsuario.getPassword());
+        novoUsuario.setPassword(senhaCodificada);
 
-        return this.usuarioRepository.save(usuarioAAtualizar);
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+
+        switch (usuarioSalvo.getRole()) {
+            case BARBER -> {
+                Barbeiro barbeiro = new Barbeiro();
+                barbeiro.setUsuario(usuarioSalvo);
+                barbeiroRepository.save(barbeiro);
+            }
+            case CLIENT -> {
+                Cliente cliente = new Cliente();
+                cliente.setUsuario(usuarioSalvo);
+                clienteRepository.save(cliente);
+            }
+        }
+
+        return usuarioSalvo;
     }
 
+    @Override
+    @Transactional
+    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+        Usuario usuarioExistente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado"));
 
-    public void deleteUsuario(Long id) {
-        Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("user"));
+        atualizarDadosUsuario(usuarioExistente, usuarioAtualizado);
+        return usuarioRepository.save(usuarioExistente);
+    }
 
-        this.usuarioRepository.delete(usuario);
+    @Override
+    @Transactional
+    public void remover(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new EntidadeNaoEncontradaException("Usuário não encontrado");
+        }
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado"));
+    }
+
+    @Override
+    @Transactional
+    public void alterarSenha(Long id, String novaSenha) {
+        Usuario usuario = buscarPorId(id);
+        usuario.setPassword(passwordEncoder.encode(novaSenha));
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void ativarUsuario(Long id) {
+        Usuario usuario = buscarPorId(id);
+        usuario.setAtivo(true);
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void desativarUsuario(Long id) {
+        Usuario usuario = buscarPorId(id);
+        usuario.setAtivo(false);
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean verificarDisponibilidadeEmail(String email) {
+        return !usuarioRepository.existsByEmail(email);
+    }
+
+    private void atualizarDadosUsuario(Usuario existente, Usuario atualizado) {
+        if (atualizado.getEmail() != null) {
+            validarEmailUnico(atualizado.getEmail(), existente.getId());
+            existente.setEmail(atualizado.getEmail());
+        }
+
+        if (atualizado.getName() != null) {
+            existente.setName(atualizado.getName());
+        }
+
+        if (atualizado.getRole() != null) {
+            existente.setRole(atualizado.getRole());
+        }
+
+        if (atualizado.getPassword() != null) {
+            existente.setPassword(passwordEncoder.encode(atualizado.getPassword()));
+        }
+    }
+
+    private void validarEmailUnico(String email, Long idIgnorado) {
+        if (usuarioRepository.existsByEmailAndIdNot(email, idIgnorado)) {
+            throw new ConflitoException("Email já está em uso por outro usuário");
+        }
     }
 }

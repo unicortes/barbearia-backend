@@ -1,13 +1,17 @@
 package br.org.unicortes.barbearia.dtos;
 
-
+import lombok.Builder;
 import lombok.Data;
 
-@Data
-public class ServicoDTO {
+import java.math.BigDecimal;
 
+@Data
+@Builder
+public class ServicoDTO {
     private Long id;
-    private String name;
-    private String description;
-    private double price;
+    private String nome;
+    private String descricao;
+    private BigDecimal preco;
+    private int duracaoPadraoMinutos;
+    private boolean ativo;
 }

@@ -1,23 +1,23 @@
 package br.org.unicortes.barbearia.services;
 
-
-import br.org.unicortes.barbearia.exceptions.ServicoNotFoundException;
+import br.org.unicortes.barbearia.exceptions.EntidadeNaoEncontradaException;
 import br.org.unicortes.barbearia.models.Servico;
 import br.org.unicortes.barbearia.repositories.ServicoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-public class ServicoServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ServicoServiceTest {
 
     @Mock
     private ServicoRepository servicoRepository;
@@ -28,87 +28,120 @@ public class ServicoServiceTest {
     private Servico servico;
 
     @BeforeEach
-    void setUp(){
-        MockitoAnnotations.openMocks(this);
-
-        servico=new Servico();
-        servico.setId(3L);
-        servico.setName("Sobrancelha");
-        servico.setDescription("serviço de fazer sobrancelha");
-        servico.setPrice(10.0);
+    void setup() {
+        servico = new Servico();
+        servico.setId(1L);
+        servico.setNome("Corte de Cabelo");
+        servico.setDescricao("Corte masculino");
+        servico.setPreco(new BigDecimal("50.00"));
+        servico.setDuracaoPadraoMinutos(30);
+        servico.setAtivo(true);
     }
 
     @Test
-    void testCreateServico() throws Exception {
+    void listarTodos() {
+        when(servicoRepository.findAll()).thenReturn(List.of(servico));
 
+        List<Servico> resultado = servicoService.listarTodos();
+
+        assertNotNull(resultado);
+        assertFalse(resultado.isEmpty());
+        assertEquals(1, resultado.size());
+        verify(servicoRepository, times(1)).findAll();
+    }
+
+    @Test
+    void buscarPorId_Existe() {
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+
+        Servico resultado = servicoService.buscarPorId(1L);
+
+        assertNotNull(resultado);
+        assertEquals(servico.getNome(), resultado.getNome());
+        verify(servicoRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void buscarPorId_NaoExiste() {
+        when(servicoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class,
+                () -> servicoService.buscarPorId(1L));
+
+        assertEquals("Serviço não encontrado", exception.getMessage());
+        verify(servicoRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void criarSucesso() {
         when(servicoRepository.save(servico)).thenReturn(servico);
 
-        Servico servicoSalvo=servicoService.createServico(servico);
-        assertNotNull(servicoSalvo);
-        assertEquals("Sobrancelha",servicoSalvo.getName());
-        assertEquals(3L,servicoSalvo.getId());
+        Servico resultado = servicoService.criar(servico);
+
+        assertNotNull(resultado);
+        assertEquals(servico.getNome(), resultado.getNome());
+        verify(servicoRepository, times(1)).save(servico);
     }
 
     @Test
-    void testUpdateServico() throws Exception {
-        Servico servico = new Servico();
-        servico.setId(4L);
-        servico.setName("Sobrancelha");
-        servico.setDescription("sobrancelha masculina");
-        servico.setPrice(10.0);
-
+    void atualizarSucesso() {
         Servico servicoAtualizado = new Servico();
-        servicoAtualizado.setPrice(15.0);
-        servicoAtualizado.setName("Corte de cabelo");
-        servicoAtualizado.setDescription(servico.getDescription());
+        servicoAtualizado.setNome("Corte Premium");
+        servicoAtualizado.setDescricao("Corte masculino com estilo");
+        servicoAtualizado.setPreco(new BigDecimal("70.00"));
+        servicoAtualizado.setDuracaoPadraoMinutos(40);
+        servicoAtualizado.setAtivo(false);
 
-        when(servicoRepository.findById(4L)).thenReturn(Optional.of(servico));
-        when(servicoRepository.save(servico)).thenReturn(servico);
+        when(servicoRepository.findById(1L)).thenReturn(Optional.of(servico));
+        when(servicoRepository.save(any(Servico.class))).thenAnswer(i -> i.getArgument(0));
 
-        Long id = servico.getId();
+        Servico resultado = servicoService.atualizar(1L, servicoAtualizado);
 
+        assertNotNull(resultado);
+        assertEquals("Corte Premium", resultado.getNome());
+        assertEquals("Corte masculino com estilo", resultado.getDescricao());
+        assertEquals(new BigDecimal("70.00"), resultado.getPreco());
+        assertEquals(40, resultado.getDuracaoPadraoMinutos());
+        assertTrue(resultado.isAtivo());
 
-        Servico servicoAtual = servicoService.updateServico(id, servicoAtualizado);
-
-        assertNotNull(servicoAtual);
-        assertEquals("Corte de cabelo", servicoAtual.getName());
-        assertEquals(4L, servicoAtual.getId());
-        assertEquals(15.0, servicoAtual.getPrice());
-
+        verify(servicoRepository, times(1)).findById(1L);
+        verify(servicoRepository, times(1)).save(resultado);
     }
 
     @Test
-    void testGetServico() throws ServicoNotFoundException {
-        when(servicoRepository.findById(3L)).thenReturn(Optional.of(servico));
+    void atualizarErro() {
+        Servico servicoAtualizado = new Servico();
 
-        Servico findId=servicoService.getServico(3L);
-        assertNotNull(findId);
-        assertEquals(3L, findId.getId());
+        when(servicoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class,
+                () -> servicoService.atualizar(1L, servicoAtualizado));
+
+        assertEquals("Serviço não encontrado", exception.getMessage());
+        verify(servicoRepository, times(1)).findById(1L);
+        verify(servicoRepository, never()).save(any());
     }
 
     @Test
-    void testGetAll() throws Exception {
-        Servico servico2 = new Servico();
-        servico2.setId(4L);
-        servico2.setName("Sobrancelha");
-        servico2.setDescription("sobrancelha masculina");
-        servico2.setPrice(10.0);
+    void removerSucesso() {
+        when(servicoRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(servicoRepository).deleteById(1L);
 
-        List<Servico> servicoList=new ArrayList<>();
-        servicoList.add(servico2);
-        servicoList.add(servico);
+        assertDoesNotThrow(() -> servicoService.remover(1L));
 
-        when(servicoRepository.findAll()).thenReturn(servicoList);
-
-        List<Servico>servicos=servicoService.getAllServico();
-        assertEquals(2, servicos.size());
-        assertEquals("Sobrancelha", servicos.get(0).getName());
-
+        verify(servicoRepository, times(1)).existsById(1L);
+        verify(servicoRepository, times(1)).deleteById(1L);
     }
 
     @Test
-    void findByIdNotFound(){
-        when(servicoRepository.findById(3L)).thenReturn(Optional.empty());
-        assertThrows(ServicoNotFoundException.class, () -> servicoService.getServico(1L));
+    void removerErro() {
+        when(servicoRepository.existsById(1L)).thenReturn(false);
+
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class,
+                () -> servicoService.remover(1L));
+
+        assertEquals("Serviço não encontrado", exception.getMessage());
+        verify(servicoRepository, times(1)).existsById(1L);
+        verify(servicoRepository, never()).deleteById(anyLong());
     }
 }

@@ -1,81 +1,72 @@
 package br.org.unicortes.barbearia.services;
 
-import br.org.unicortes.barbearia.exceptions.ServicoNotFoundException;
+import br.org.unicortes.barbearia.exceptions.EntidadeNaoEncontradaException;
 import br.org.unicortes.barbearia.models.Servico;
 import br.org.unicortes.barbearia.repositories.ServicoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.org.unicortes.barbearia.services.interfaces.IServicoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class ServicoService {
+@RequiredArgsConstructor
+public class ServicoService implements IServicoService {
 
-    @Autowired
-    private ServicoRepository servicoRepository;
+    private final ServicoRepository servicoRepository;
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Servico> listarTodos() {
+        return servicoRepository.findAll();
+    }
 
-    public Servico createServico(Servico servico) throws Exception {
-        Servico servicoNew=new Servico();
-        try {
-            servicoNew = servicoRepository.save(servico);
-        }catch (Exception  e){
-            throw new Exception();
+    @Override
+    @Transactional(readOnly = true)
+    public Servico buscarPorId(Long id) {
+        return servicoRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Serviço não encontrado"));
+    }
+
+    @Override
+    @Transactional
+    public Servico criar(Servico novoServico) {
+        return servicoRepository.save(novoServico);
+    }
+
+    @Override
+    @Transactional
+    public Servico atualizar(Long id, Servico servicoAtualizado) {
+        Servico existente = buscarPorId(id);
+        atualizarDadosServico(existente, servicoAtualizado);
+        return servicoRepository.save(existente);
+    }
+
+    @Override
+    @Transactional
+    public void remover(Long id) {
+        if (!servicoRepository.existsById(id)) {
+            throw new EntidadeNaoEncontradaException("Serviço não encontrado");
         }
-        return servicoNew;
+        servicoRepository.deleteById(id);
     }
 
-    public List<Servico> getAllServico(){
-        List<Servico> servicos=servicoRepository.findAll();
-        return servicos;
-    }
-
-    public Servico getServico(Long id) throws ServicoNotFoundException {
-
-        Servico servico=servicoRepository.findById(id)
-                .orElseThrow(() -> new ServicoNotFoundException("Serviço não encontrado para o ID: " + id));
-
-        return servico;
-    }
-    public Servico updateServico(Long id ,Servico servicoAtual) throws Exception {
-        Servico servicoAtualizado=new Servico();
-        Servico servicoAntigo=new Servico();
-
-        try {
-            servicoAntigo = getServico(id);
-
-            if(!servicoAtual.getName().trim().equalsIgnoreCase(servicoAntigo.getName().trim())){
-                servicoAntigo.setName(servicoAtual.getName());
-            }
-            if(!servicoAtual.getDescription().trim().equalsIgnoreCase(servicoAntigo.getDescription().trim())){
-                servicoAntigo.setDescription(servicoAtual.getDescription());
-            }
-            if(servicoAtual.getPrice()!=servicoAntigo.getPrice()){
-                servicoAntigo.setPrice(servicoAtual.getPrice());
-            }
-
-            servicoAtualizado=servicoRepository.save(servicoAntigo);
-
-        }catch (ServicoNotFoundException e){
-            throw  new ServicoNotFoundException();
-        }catch (Exception e){
-            throw new Exception();
+    private void atualizarDadosServico(Servico existente, Servico atualizado) {
+        if (atualizado.getNome() != null) {
+            existente.setNome(atualizado.getNome());
         }
-
-
-
-        return servicoAtualizado;
-    }
-
-    public void deleteServico(Long id) throws ServicoNotFoundException, Exception{
-
-        try{
-            Servico servico = getServico(id);
-            servicoRepository.delete(servico);
-        }catch (ServicoNotFoundException e){
-            throw new ServicoNotFoundException();
-        }catch (Exception e){
-            throw new Exception();
+        if (atualizado.getDescricao() != null) {
+            existente.setDescricao(atualizado.getDescricao());
+        }
+        if (atualizado.getPreco() != null) {
+            existente.setPreco(atualizado.getPreco());
+        }
+        if (atualizado.getDuracaoPadraoMinutos() != existente.getDuracaoPadraoMinutos()) {
+            existente.setDuracaoPadraoMinutos(atualizado.getDuracaoPadraoMinutos());
+        }
+        if (atualizado.isAtivo()) {
+            existente.setAtivo(true);
         }
     }
 }

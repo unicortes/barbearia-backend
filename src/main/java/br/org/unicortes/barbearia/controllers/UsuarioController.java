@@ -1,76 +1,73 @@
 package br.org.unicortes.barbearia.controllers;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import br.org.unicortes.barbearia.dtos.StockDTO;
+import br.org.unicortes.barbearia.controllers.api.UsuarioApi;
 import br.org.unicortes.barbearia.dtos.UsuarioDTO;
-import br.org.unicortes.barbearia.models.Product;
-import br.org.unicortes.barbearia.models.Stock;
+import br.org.unicortes.barbearia.responses.AbstractResponse;
+import br.org.unicortes.barbearia.mappers.IUsuarioMapper;
 import br.org.unicortes.barbearia.models.Usuario;
-import br.org.unicortes.barbearia.services.UsuarioService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import br.org.unicortes.barbearia.requests.NovaSenhaRequest;
+import br.org.unicortes.barbearia.services.interfaces.IUsuarioService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequiredArgsConstructor
+public class UsuarioController implements UsuarioApi {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final IUsuarioService usuarioService;
+    private final IUsuarioMapper usuarioMapper;
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        List<UsuarioDTO> usuarios = usuarioService.getAllUsuarios().stream().map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(usuarios);
+    @Override
+    public ResponseEntity<AbstractResponse<List<UsuarioDTO>>> listarTodos() {
+        List<UsuarioDTO> usuarios = usuarioService.listarTodos()
+                .stream()
+                .map(usuarioMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(AbstractResponse.success(usuarios));
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
-        Usuario usuario = this.usuarioService.getUsuarioById(id);
-        return ResponseEntity.ok(convertToDTO(usuario));
+    @Override
+    public ResponseEntity<AbstractResponse<UsuarioDTO>> buscarPorId(Long id) {
+        UsuarioDTO usuario = usuarioMapper.toDTO(usuarioService.buscarPorId(id));
+        return ResponseEntity.ok(AbstractResponse.success(usuario));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
-        Usuario usuario = this.convertToEntity(usuarioDTO);
-        Usuario usuarioAtualizado = this.usuarioService.updateUsuario(usuario);
-        return ResponseEntity.ok(convertToDTO(usuarioAtualizado));
+    @Override
+    public ResponseEntity<AbstractResponse<UsuarioDTO>> criar(UsuarioDTO usuarioDTO) {
+        Usuario usuario = usuarioService.criar(usuarioMapper.toEntity(usuarioDTO));
+        UsuarioDTO usuarioCriado = usuarioMapper.toDTO(usuario);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(usuario.getId())
+                .toUri();
+
+        return ResponseEntity.created(location)
+                .body(AbstractResponse.success(usuarioCriado, "Usuário criado com sucesso"));
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
-        this.usuarioService.deleteUsuario(id);
-        return ResponseEntity.noContent().build();
+    @Override
+    public ResponseEntity<AbstractResponse<UsuarioDTO>> atualizar(Long id, UsuarioDTO usuarioDTO) {
+        Usuario usuarioAtualizado = usuarioService.atualizar(id, usuarioMapper.toEntity(usuarioDTO));
+        UsuarioDTO dtoAtualizado = usuarioMapper.toDTO(usuarioAtualizado);
+        return ResponseEntity.ok(AbstractResponse.success(dtoAtualizado, "Usuário atualizado com sucesso"));
     }
 
-    private UsuarioDTO convertToDTO(Usuario usuario) {
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setId(usuario.getId());
-        usuarioDTO.setName(usuario.getName());
-        usuarioDTO.setEmail(usuario.getEmail());
-        usuarioDTO.setPassword(usuario.getPassword());
-        usuarioDTO.setRole(usuario.getRole());
-        return usuarioDTO;
+    @Override
+    public ResponseEntity<AbstractResponse<Void>> alterarSenha(Long id, NovaSenhaRequest novaSenha) {
+        usuarioService.alterarSenha(id, novaSenha.senha());
+        return ResponseEntity.ok(AbstractResponse.success(null, "Senha alterada com sucesso"));
     }
 
-    private Usuario convertToEntity(UsuarioDTO usuarioDTO) {
-        Usuario usuario = new Usuario();
-        usuario.setName(usuarioDTO.getName());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setPassword(usuarioDTO.getPassword());
-        usuario.setRole(usuarioDTO.getRole());
-        return usuario;
+    @Override
+    public ResponseEntity<AbstractResponse<Void>> remover(Long id) {
+        usuarioService.remover(id);
+        return ResponseEntity.ok(AbstractResponse.success(null, "Usuário removido com sucesso"));
     }
 }

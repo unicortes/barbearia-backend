@@ -1,65 +1,53 @@
 package br.org.unicortes.barbearia.controllers;
 
+import br.org.unicortes.barbearia.controllers.api.AuthApi;
+import br.org.unicortes.barbearia.dtos.LoginDTO;
 import br.org.unicortes.barbearia.models.Usuario;
+import br.org.unicortes.barbearia.responses.AbstractResponse;
 import br.org.unicortes.barbearia.services.AuthService;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
-@CrossOrigin("*")
-@RequestMapping()
-public class AuthController {
+@RequiredArgsConstructor
+public class AuthController implements AuthApi {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-
-    @GetMapping("/admin/test")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> testAdminAccess() {
-        return ResponseEntity.ok("Admin access granted!");
+    @Override
+    public ResponseEntity<AbstractResponse<String>> testAdminAccess() {
+        return ResponseEntity.ok(AbstractResponse.success("Admin access granted!"));
     }
 
-
-    @PostMapping("/register")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Usuario> registerUser(@RequestBody Usuario user) {
-        try {
-            Usuario usuario = this.authService.createUser(user);
-            return ResponseEntity.ok(usuario);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    @Override
+    public ResponseEntity<AbstractResponse<Usuario>> registerUser(Usuario user) {
+        Usuario usuarioCriado = authService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(AbstractResponse.success(usuarioCriado, "Usuário criado com sucesso"));
     }
 
-  @PostMapping("/login")
-    public ResponseEntity<Usuario> loginUser(@RequestBody Usuario usuario) {
-      System.out.println(usuario);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getPassword());
+    @Override
+    public ResponseEntity<AbstractResponse<LoginDTO>> loginUser(Usuario usuario) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getPassword())
+        );
 
-      //  Authentication authentication = this.authenticationManager.authenticate(token);
-        UserDetails userDetails = this.authService.loadUserByUsername(usuario.getEmail());
-        Usuario user = this.authService.getUsuarioByEmail(userDetails.getUsername());
-        user.setToken(this.authService.gerarToken(user));
+        Optional<Usuario> usuarioOpt = authService.getUsuarioByEmail(usuario.getEmail());
 
-        return ResponseEntity.ok(user);
+        return usuarioOpt.map(usuarioAutenticado -> {
+            String token = authService.gerarToken(usuarioAutenticado);
+            LoginDTO loginDTO = new LoginDTO(usuarioAutenticado, token);
+            return ResponseEntity.ok(AbstractResponse.success(loginDTO, "Login realizado com sucesso"));
+        }).orElseGet(() ->
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(AbstractResponse.error("Usuário não encontrado após autenticação", "USER_NOT_FOUND"))
+        );
     }
-
-
-
 }

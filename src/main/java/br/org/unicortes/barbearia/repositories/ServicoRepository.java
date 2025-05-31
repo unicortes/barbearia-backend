@@ -9,10 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ServicoRepository extends JpaRepository<Servico, Long> {
-
-
-    Optional<Servico>findByName(String name);
-
     Optional<Servico> findById(Long id);
-
 }

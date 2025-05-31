@@ -1,26 +1,25 @@
 package br.org.unicortes.barbearia.controllers;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/home")
+@CrossOrigin(origins = "*")
 public class HomeController {
+
     @GetMapping("/cliente")
-    public String clientHome(){
-        return "Cliente Home";
+    public ResponseEntity<String> clienteHome() {
+        return ResponseEntity.ok("Página inicial do cliente");
     }
 
     @GetMapping("/admin")
-    public String adminHome(){
-        return "Admin Home";
+    public ResponseEntity<String> adminHome() {
+        return ResponseEntity.ok("Página inicial do administrador");
     }
 
     @GetMapping("/barbeiro")
-    public String barberHome(){
-        return "Barber Home";
+    public ResponseEntity<String> barbeiroHome() {
+        return ResponseEntity.ok("Página inicial do barbeiro");
     }
 }

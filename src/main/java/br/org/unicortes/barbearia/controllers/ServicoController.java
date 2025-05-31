@@ -1,131 +1,70 @@
 package br.org.unicortes.barbearia.controllers;
 
-
+import br.org.unicortes.barbearia.controllers.api.ServicoApi;
 import br.org.unicortes.barbearia.dtos.ServicoDTO;
-import br.org.unicortes.barbearia.exceptions.ServicoNotFoundException;
+import br.org.unicortes.barbearia.mappers.IServicoMapper;
 import br.org.unicortes.barbearia.models.Servico;
-import br.org.unicortes.barbearia.services.ServicoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import br.org.unicortes.barbearia.responses.AbstractResponse;
+import br.org.unicortes.barbearia.services.interfaces.IServicoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/servicos")
-public class ServicoController {
-    @Autowired
-    private ServicoService serviceServico;
+@RequiredArgsConstructor
+public class ServicoController implements ServicoApi {
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
-    public ResponseEntity<ServicoDTO>getServicoById(@PathVariable Long id){
-        ServicoDTO servicoDTO=new ServicoDTO();
+    private final IServicoService servicoService;
+    private final IServicoMapper servicoMapper;
 
-        try{
-            Servico servicoRet=serviceServico.getServico(id);
-            servicoDTO=servicoGetTo(servicoRet);
-            return ResponseEntity.ok(servicoDTO);
-        }catch (ServicoNotFoundException e){
-            e.getStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND) .body(null);
-        }
+    @Override
+    public ResponseEntity<AbstractResponse<List<ServicoDTO>>> listarTodos() {
+        List<ServicoDTO> servicos = servicoService.listarTodos()
+                .stream()
+                .map(servicoMapper::toDTO)
+                .toList();
 
+        return ResponseEntity.ok(AbstractResponse.success(servicos));
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('CLIENT, BARBER, ADMIN')")
-    public ResponseEntity<List<ServicoDTO>>getAllServicos(){
-
-        List<ServicoDTO>servicoDTOS=new ArrayList<>();
-        List<Servico>servicos=serviceServico.getAllServico();
-
-        if(servicos!=null && !servicos.isEmpty()){
-            servicoDTOS=servicos.stream()
-                    .map(this::servicoGetTo)
-                    .collect(Collectors.toList());
-        }
-        return ResponseEntity.ok(servicoDTOS);
+    @Override
+    public ResponseEntity<AbstractResponse<ServicoDTO>> buscarPorId(Long id) {
+        Servico servico = servicoService.buscarPorId(id);
+        return ResponseEntity.ok(AbstractResponse.success(servicoMapper.toDTO(servico)));
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
-    public ResponseEntity<ServicoDTO>createServico(@RequestBody ServicoDTO servicoDTO){
-        Servico servico=getEntity(servicoDTO);
+    @Override
+    public ResponseEntity<AbstractResponse<ServicoDTO>> criar(ServicoDTO servicoDTO) {
+        Servico novoServico = servicoMapper.toEntity(servicoDTO);
+        Servico servicoSalvo = servicoService.criar(novoServico);
+        ServicoDTO dtoCriado = servicoMapper.toDTO(servicoSalvo);
 
-        try{
-            Servico ret = serviceServico.createServico(servico);
-            ServicoDTO servicoSalvo = servicoGetTo(ret);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(servicoSalvo.getId())
+                .toUri();
 
-            return ResponseEntity.ok(servicoSalvo);
-
-        }catch (Exception e){
-            e.printStackTrace();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
+        return ResponseEntity.created(location)
+                .body(AbstractResponse.success(dtoCriado, "Serviço criado com sucesso"));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
-    private ResponseEntity<ServicoDTO>updateServico(@PathVariable Long id, @RequestBody ServicoDTO servicoDTO){
-
-        try{
-            Servico servico=getEntity(servicoDTO);
-            Servico servicoRet=serviceServico.updateServico(id,servico);
-            ServicoDTO ret=servicoGetTo(servicoRet);
-            return ResponseEntity.ok(ret);
-        }catch (ServicoNotFoundException e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
+    @Override
+    public ResponseEntity<AbstractResponse<ServicoDTO>> atualizar(Long id, ServicoDTO servicoDTO) {
+        Servico servicoAtualizado = servicoService.atualizar(id, servicoMapper.toEntity(servicoDTO));
+        ServicoDTO dtoAtualizado = servicoMapper.toDTO(servicoAtualizado);
+        return ResponseEntity.ok(AbstractResponse.success(dtoAtualizado, "Serviço atualizado com sucesso"));
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('BARBER, ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-
-        try{
-            serviceServico.deleteServico(id);
-            return ResponseEntity.noContent().build();
-        }catch (ServicoNotFoundException e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }catch (Exception e){
-            e.printStackTrace();
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-    }
-
-    private ServicoDTO servicoGetTo(Servico servico){
-        ServicoDTO servicoDTO=new ServicoDTO();
-        servicoDTO.setId(servico.getId());
-        servicoDTO.setName(servico.getName());
-        servicoDTO.setDescription(servico.getDescription());
-        servicoDTO.setPrice(servico.getPrice());
-        return servicoDTO;
-    }
-
-    private Servico getEntity(ServicoDTO servicoDTO){
-        Servico servicoNew = new Servico();
-
-        if(servicoDTO.getId()!=null){
-            servicoNew.setId(servicoDTO.getId());
-        }
-        servicoNew.setName(servicoDTO.getName());
-        servicoNew.setDescription(servicoDTO.getDescription());
-        servicoNew.setPrice(servicoDTO.getPrice());
-        return servicoNew;
+    @Override
+    public ResponseEntity<AbstractResponse<Void>> remover(Long id) {
+        servicoService.remover(id);
+        return ResponseEntity.ok(AbstractResponse.success(null, "Serviço removido com sucesso"));
     }
 }

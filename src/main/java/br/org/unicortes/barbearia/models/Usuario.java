@@ -1,55 +1,85 @@
 package br.org.unicortes.barbearia.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import br.org.unicortes.barbearia.dtos.UsuarioDTO;
+import br.org.unicortes.barbearia.enums.Roles;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 @Data
-@Entity(name = "tb_usuarios")
-public class Usuario implements UserDetails{
+@Entity
+@Table(name = "tb_usuarios")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O campo 'name' é obrigatório")
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(min = 3, max = 100, message = "Nome deve ter entre 3 e 100 caracteres")
+    @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "O 'senha' é obrigatório")
+    @NotBlank(message = "Senha é obrigatória")
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank(message = "O campo 'email' é obrigatório")
+    @NotBlank(message = "Email é obrigatório")
+    @Email(message = "Email deve ser válido")
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "O campo 'role' é obrigatório")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Roles role;
 
-    private String token;
+    @Column(name = "refresh_token", length = 500)
+    private String refreshToken;
+
+    @Column(name = "token_expiration")
+    private LocalDateTime tokenExpiration;
+
+    @Column(name = "ativo", nullable = false)
+    @Builder.Default
+    private Boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
+        return List.of(new SimpleGrantedAuthority(this.role.getAuthority()));
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return email;
     }
 
-    public boolean isAdmin() {
-        return this.role != null && this.role.equals("ADMIN");
-
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
