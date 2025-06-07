@@ -2,6 +2,7 @@ package br.org.unicortes.barbearia.models;
 
 import br.org.unicortes.barbearia.dtos.UsuarioDTO;
 import br.org.unicortes.barbearia.enums.Roles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -54,6 +55,7 @@ public class Usuario implements UserDetails {
     private Boolean ativo = true;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.getAuthority()));
     }

@@ -1,11 +1,13 @@
 package br.org.unicortes.barbearia.dtos;
 
 import br.org.unicortes.barbearia.enums.Roles;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class UsuarioDTO {
     private Long id;
     private String name;
