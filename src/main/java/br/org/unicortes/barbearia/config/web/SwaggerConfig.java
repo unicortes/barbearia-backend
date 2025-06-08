@@ -50,9 +50,7 @@ public class SwaggerConfig {
                         Endpoints.PUBLIC_API_SERVICES,
                         Endpoints.PUBLIC_API_AVAILABLE_TIMES,
                         Endpoints.PUBLIC_API_APPOINTMENTS_AVAILABLE,
-                        Endpoints.HOME,
-                        Endpoints.SWAGGER_UI,
-                        Endpoints.STATIC_RESOURCES
+                        Endpoints.HOME
                 ))
                 .build();
     }

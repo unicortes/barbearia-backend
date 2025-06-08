@@ -10,10 +10,14 @@ public enum Endpoints {
     PUBLIC_API_AVAILABLE_TIMES("/available-times/**"),
     PUBLIC_API_APPOINTMENTS_AVAILABLE("/appointments/available/**"),
     HOME("/home"),
-    SWAGGER_UI("/barbeariaUnicortes/api-docs/**",
-            "/barbeariaUnicortes/api-docs.json",
-            "/barbeariaUnicortes/swagger-ui.html",
-            "/barbeariaUnicortes/swagger-ui/**"),
+    SWAGGER_UI(
+            "/api-docs/**",
+            "/api-docs",
+            "/api-docs.json",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**"
+    ),
 
     ADMIN_REGISTER("/register"),
     ADMIN_STOCKS("/stocks/**"),
